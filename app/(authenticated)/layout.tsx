@@ -1,11 +1,10 @@
 "use client";
 
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { StoreProvider } from "easy-peasy";
 import store from "@/store/store";
-import "@/lib/date";
+import TransactionModal from "@/components/transactions/transaction-modal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,14 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <StoreProvider store={store}>
-      <html lang="en" className="dark">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </html>
-    </StoreProvider>
+    <>
+      <TransactionModal />
+      {children}
+    </>
   );
 }

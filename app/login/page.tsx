@@ -2,16 +2,22 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { handleLoginService, LoginData } from "@/services/auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginData>();
-
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (data: LoginData) => {
+    setLoading(true);
     await handleLoginService(data);
+    router.push("/transactions");
+    setLoading(false);
   };
 
   return (
@@ -36,7 +42,7 @@ export default function Login() {
               {...register("password", { required: true })}
             />
           </Field>
-          <Button>Login</Button>
+          <Button>{loading ? <Spinner /> : "Login"}</Button>
         </form>
       </main>
     </div>
