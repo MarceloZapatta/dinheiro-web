@@ -1,26 +1,17 @@
-import { Account } from "@/types/account";
-import { retrieveToken } from "./auth";
-import { Category } from "@/types/category";
-
-export interface Transaction {
-  id: string;
-  descricao: string;
-  valor: number;
-  conta: Account;
-  categoria: Category;
-  created_at: string;
-  updated_at: string;
-}
+import { retrieveToken } from "@/services/auth";
+import { Transaction } from "@/types/transaction";
 
 interface TransactionResponse {
   data: Transaction[];
 }
 
 export interface TransactionData {
+  data_transacao: string;
   descricao: string;
   valor: number;
   conta_id: string;
   categoria_id: string;
+  despesa: "1" | "0";
 }
 
 export async function fetchTransactions(): Promise<TransactionResponse> {
@@ -44,8 +35,7 @@ export async function fetchTransactions(): Promise<TransactionResponse> {
   );
 
   if (!res.ok) {
-    console.error("Fetching transactions failed");
-    return;
+    throw new Error("Failed to fetch transactions");
   }
 
   return await res.json();

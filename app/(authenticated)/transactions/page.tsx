@@ -12,17 +12,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchTransactions, Transaction } from "@/services/transactions";
-import { useStoreActions } from "@/store/hooks";
+import { fetchTransactions } from "@/services/transactions";
+import { useStoreActions, useStoreState } from "@/store/hooks";
 import { useEffect, useState } from "react";
 
 export default function Transactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-
-  const loadTransactions = async () => {
-    const response = await fetchTransactions();
-    setTransactions(response.data);
-  };
+  const transactions = useStoreState((state) => state.transactions);
+  const fetchTransactionsThunk = useStoreActions(
+    (actions) => actions.fetchTransactionsThunk
+  );
 
   const toggleTransactionModal = useStoreActions(
     (actions) => actions.toggleTransactionModal
@@ -30,7 +28,7 @@ export default function Transactions() {
 
   useEffect(() => {
     (async () => {
-      await loadTransactions();
+      await fetchTransactionsThunk();
     })();
   }, []);
 

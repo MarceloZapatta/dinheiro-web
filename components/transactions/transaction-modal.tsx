@@ -23,14 +23,18 @@ import AccountSelect from "../ui/accounts/account-select";
 import CategorySelect from "../ui/categories/categories-select";
 import { storeTransaction, TransactionData } from "@/services/transactions";
 import DatePicker from "../ui/date-picker";
+import { DevTool } from "@hookform/devtools";
+import TransactionTypeRadioGroup from "../ui/transactions/transaction-type-radio-group";
 
 export default function TransactionModal() {
   const methods = useForm<TransactionData>({
     defaultValues: {
+      data_transacao: new Date().toISOString().split("T")[0],
       descricao: "",
       valor: 0,
       conta_id: "",
       categoria_id: "",
+      despesa: "1",
     },
   });
   const open = useStoreState((state) => state.transactionModalOpen);
@@ -39,15 +43,18 @@ export default function TransactionModal() {
   );
   const setAccounts = useStoreActions((actions) => actions.setAccounts);
   const setCategories = useStoreActions((actions) => actions.setCategories);
+  const fetchTransactionsThunk = useStoreActions(
+    (actions) => actions.fetchTransactionsThunk
+  );
 
   const [loading, setLoading] = useState(false);
 
   const handleAddTransaction = async (data: TransactionData) => {
     setLoading(true);
-    console.log("Form submitted", data);
 
     await storeTransaction(data);
 
+    fetchTransactionsThunk();
     toggleTransactionModal();
     setLoading(false);
   };
@@ -81,6 +88,7 @@ export default function TransactionModal() {
       <Dialog open={open} onOpenChange={() => toggleTransactionModal()}>
         <DialogContent className="sm:max-w-[425px]">
           <FormProvider {...methods}>
+            <DevTool control={methods.control} />
             <form onSubmit={methods.handleSubmit(handleAddTransaction)}>
               <DialogHeader>
                 <DialogTitle>Adicionar transação</DialogTitle>
@@ -90,8 +98,11 @@ export default function TransactionModal() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
+                  <TransactionTypeRadioGroup name="despesa" />
+                </div>
+                <div className="grid gap-2">
                   <Label htmlFor="description-form">Data</Label>
-                  <DatePicker />
+                  <DatePicker name="data_transacao" />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="description-form">Descrição</Label>
