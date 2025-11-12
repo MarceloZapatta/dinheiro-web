@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleFillIcon } from "@/components/ui/icons/akar-icons-circle-fill";
 import { useStoreState } from "@/store/hooks";
+import { Circle } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 
 export default function CategorySelect() {
@@ -36,7 +36,7 @@ export default function CategorySelect() {
               {categories.map((category) => (
                 <SelectItem key={category.id} value={String(category.id)}>
                   <div className="flex items-center gap-2">
-                    <CircleFillIcon color={category.cor.hexadecimal} />
+                    <Circle color={category.cor.hexadecimal} />
                     <span>{category.nome}</span>
                   </div>
                 </SelectItem>

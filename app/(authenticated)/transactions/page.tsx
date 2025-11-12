@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CircleFillIcon } from "@/components/ui/icons/akar-icons-circle-fill";
-import { PlusIcon } from "@/components/ui/icons/akar-icons-plus";
 import {
   Table,
   TableBody,
@@ -12,33 +10,69 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchTransactions } from "@/services/transactions";
 import { useStoreActions, useStoreState } from "@/store/hooks";
-import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Circle, Plus } from "lucide-react";
+import { useEffect } from "react";
+import { format, parse } from "date-fns";
 
 export default function Transactions() {
   const transactions = useStoreState((state) => state.transactions);
-  const fetchTransactionsThunk = useStoreActions(
-    (actions) => actions.fetchTransactionsThunk
+  const transactionsStartPeriod = useStoreState(
+    (state) => state.transactionsStartPeriod
+  );
+  const moveNextTransactionsPeriod = useStoreActions(
+    (actions) => actions.moveNextTransactionsPeriod
+  );
+  const movePreviousTransactionsPeriod = useStoreActions(
+    (actions) => actions.movePreviousTransactionsPeriod
+  );
+
+  const fetchTransactions = useStoreActions(
+    (actions) => actions.fetchTransactions
   );
 
   const toggleTransactionModal = useStoreActions(
     (actions) => actions.toggleTransactionModal
   );
 
+  const handleNextPeriod = () => {
+    moveNextTransactionsPeriod();
+  };
+
+  const handlePreviousPeriod = () => {
+    movePreviousTransactionsPeriod();
+  };
+
+  const currentPeriod = format(
+    parse(transactionsStartPeriod, "yyyy-MM-dd", new Date()),
+    "MMMM yyyy"
+  );
+
+  const capitalizedPeriod =
+    currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1);
+
   useEffect(() => {
     (async () => {
-      await fetchTransactionsThunk();
+      await fetchTransactions();
     })();
-  }, []);
+  }, [fetchTransactions]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex justify-between w-full">
           <h1 className="text-2xl pb-5">Movimentações</h1>
           <Button onClick={() => toggleTransactionModal()}>
-            <PlusIcon />
+            <Plus />
+          </Button>
+        </div>
+        <div className="flex justify-between w-full p-4">
+          <Button variant={"ghost"} onClick={handlePreviousPeriod}>
+            <ChevronLeft />
+          </Button>
+          <span>{capitalizedPeriod}</span>
+          <Button variant={"ghost"} onClick={handleNextPeriod}>
+            <ChevronRight />
           </Button>
         </div>
         <Table>
@@ -60,7 +94,7 @@ export default function Transactions() {
                 <TableCell>{transaction.conta.nome}</TableCell>
                 <TableCell>
                   <span className="flex">
-                    <CircleFillIcon
+                    <Circle
                       color={transaction.categoria.cor.hexadecimal}
                       size={14}
                       className="mr-2 mt-1"

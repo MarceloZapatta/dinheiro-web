@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleFillIcon } from "@/components/ui/icons/akar-icons-circle-fill";
 import { useStoreState } from "@/store/hooks";
+import { Circle } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 
 export default function AccountSelect() {
@@ -36,7 +36,7 @@ export default function AccountSelect() {
               {accounts.map((account) => (
                 <SelectItem key={account.id} value={String(account.id)}>
                   <div className="flex items-center gap-2">
-                    <CircleFillIcon color={account.cor.hexadecimal} />
+                    <Circle color={account.cor.hexadecimal} />
                     <span>{account.nome}</span>
                   </div>
                 </SelectItem>

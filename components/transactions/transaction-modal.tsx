@@ -43,8 +43,8 @@ export default function TransactionModal() {
   );
   const setAccounts = useStoreActions((actions) => actions.setAccounts);
   const setCategories = useStoreActions((actions) => actions.setCategories);
-  const fetchTransactionsThunk = useStoreActions(
-    (actions) => actions.fetchTransactionsThunk
+  const fetchTransactions = useStoreActions(
+    (actions) => actions.fetchTransactions
   );
 
   const [loading, setLoading] = useState(false);
@@ -54,7 +54,7 @@ export default function TransactionModal() {
 
     await storeTransaction(data);
 
-    fetchTransactionsThunk();
+    fetchTransactions();
     toggleTransactionModal();
     setLoading(false);
   };

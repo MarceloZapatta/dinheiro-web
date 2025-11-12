@@ -14,16 +14,17 @@ export interface TransactionData {
   despesa: "1" | "0";
 }
 
-export async function fetchTransactions(): Promise<TransactionResponse> {
+export async function fetchTransactions(
+  startPeriod: string,
+  endPeriod: string
+): Promise<TransactionResponse> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!apiUrl) {
     throw new Error("API URL is not defined");
   }
 
-  console.log(await retrieveToken());
-
   const res = await fetch(
-    `${apiUrl}/transactions?date_start=2025-11-01&date_end=2025-11-30`,
+    `${apiUrl}/transactions?date_start=${startPeriod}&date_end=${endPeriod}`,
     {
       method: "GET",
       headers: {
