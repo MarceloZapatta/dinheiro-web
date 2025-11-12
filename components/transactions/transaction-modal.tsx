@@ -21,12 +21,18 @@ import { fetchAccounts } from "@/services/accounts";
 import { fetchCategories } from "@/services/categories";
 import AccountSelect from "../ui/accounts/account-select";
 import CategorySelect from "../ui/categories/categories-select";
-import { storeTransaction, TransactionData } from "@/services/transactions";
+import {
+  storeTransaction,
+  TransactionData,
+  updateTransaction,
+} from "@/services/transactions";
 import DatePicker from "../ui/date-picker";
 import { DevTool } from "@hookform/devtools";
-import TransactionTypeRadioGroup from "../ui/transactions/transaction-type-radio-group";
+import TypeRadioGroup from "../ui/transactions/type-radio-group";
 
 export default function TransactionModal() {
+  const transactionEdit = useStoreState((state) => state.transactionEdit);
+
   const methods = useForm<TransactionData>({
     defaultValues: {
       data_transacao: new Date().toISOString().split("T")[0],
@@ -49,10 +55,14 @@ export default function TransactionModal() {
 
   const [loading, setLoading] = useState(false);
 
-  const handleAddTransaction = async (data: TransactionData) => {
+  const handleSaveTransaction = async (data: TransactionData) => {
     setLoading(true);
 
-    await storeTransaction(data);
+    if (transactionEdit) {
+      await updateTransaction(transactionEdit.id, data);
+    } else {
+      await storeTransaction(data);
+    }
 
     fetchTransactions();
     toggleTransactionModal();
@@ -62,8 +72,17 @@ export default function TransactionModal() {
   useEffect(() => {
     if (!open) {
       methods.reset();
+    } else if (transactionEdit) {
+      methods.reset({
+        data_transacao: transactionEdit.data_transacao,
+        descricao: transactionEdit.descricao,
+        valor: transactionEdit.valor,
+        conta_id: String(transactionEdit.conta.id),
+        categoria_id: String(transactionEdit.categoria.id),
+        despesa: transactionEdit.valor < 1 ? "1" : "0",
+      });
     }
-  }, [methods, open]);
+  }, [methods, open, transactionEdit]);
 
   useEffect(() => {
     async function loadAccounts() {
@@ -89,7 +108,7 @@ export default function TransactionModal() {
         <DialogContent className="sm:max-w-[425px]">
           <FormProvider {...methods}>
             <DevTool control={methods.control} />
-            <form onSubmit={methods.handleSubmit(handleAddTransaction)}>
+            <form onSubmit={methods.handleSubmit(handleSaveTransaction)}>
               <DialogHeader>
                 <DialogTitle>Adicionar transação</DialogTitle>
                 <DialogDescription>
@@ -98,7 +117,7 @@ export default function TransactionModal() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <TransactionTypeRadioGroup name="despesa" />
+                  <TypeRadioGroup name="despesa" />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="description-form">Data</Label>

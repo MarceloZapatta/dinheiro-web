@@ -67,3 +67,29 @@ export async function storeTransaction(data: TransactionData) {
   const result = await res.json();
   console.log(result);
 }
+
+export async function updateTransaction(id: number, data: TransactionData) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    console.error("API URL is not defined");
+    return;
+  }
+
+  const res = await fetch(`${apiUrl}/transactions/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${await retrieveToken()}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    console.error("Storing transaction failed");
+    return;
+  }
+
+  const result = await res.json();
+  console.log(result);
+}

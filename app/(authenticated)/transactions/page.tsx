@@ -26,6 +26,9 @@ export default function Transactions() {
   const movePreviousTransactionsPeriod = useStoreActions(
     (actions) => actions.movePreviousTransactionsPeriod
   );
+  const editTransaction = useStoreActions(
+    (actions) => actions.editTransaction
+  );
 
   const fetchTransactions = useStoreActions(
     (actions) => actions.fetchTransactions
@@ -87,7 +90,10 @@ export default function Transactions() {
           </TableHeader>
           <TableBody>
             {transactions.map((transaction) => (
-              <TableRow key={transaction.id}>
+              <TableRow
+                key={transaction.id}
+                onClick={() => editTransaction(transaction)}
+              >
                 <TableCell className="font-medium">
                   {transaction.descricao}
                 </TableCell>

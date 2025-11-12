@@ -2,13 +2,11 @@ import { Label } from "../label";
 import { Controller, useFormContext } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "../radio-group";
 
-interface TransactionTypeRadioGroupProps {
+interface TypeRadioGroupProps {
   name: string;
 }
 
-export default function TransactionTypeRadioGroup(
-  props: Readonly<TransactionTypeRadioGroupProps>
-) {
+export default function TypeRadioGroup(props: Readonly<TypeRadioGroupProps>) {
   const { control } = useFormContext();
 
   return (

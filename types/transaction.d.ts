@@ -1,5 +1,6 @@
 export interface Transaction {
-  id: string;
+  id: number;
+  data_transacao: string;
   descricao: string;
   valor: number;
   conta: Account;

@@ -29,10 +29,13 @@ export interface StoreModel {
   setCategories: Action<StoreModel, Category[]>;
   transactions: Transaction[];
   setTransactions: Action<StoreModel, Transaction[]>;
+  transactionEdit: Transaction | null;
+  setTransactionEdit: Action<StoreModel, Transaction | null>;
   fetchTransactions: Thunk<StoreModel>;
   transactionsStartPeriod: string;
   transactionsEndPeriod: string;
   setTransactionsPeriod: Action<StoreModel, { start: string; end: string }>;
+  editTransaction: Thunk<StoreModel, Transaction>;
   moveNextTransactionsPeriod: Thunk<StoreModel>;
   movePreviousTransactionsPeriod: Thunk<StoreModel>;
 }
@@ -53,6 +56,14 @@ export default createStore<StoreModel>({
   transactions: [],
   setTransactions: action((state, payload) => {
     state.transactions = payload;
+  }),
+  transactionEdit: null,
+  setTransactionEdit: action((state, payload) => {
+    state.transactionEdit = payload;
+  }),
+  editTransaction: thunk((actions, _payload: Transaction) => {
+    actions.setTransactionEdit(_payload);
+    actions.toggleTransactionModal();
   }),
   fetchTransactions: thunk(async (actions, _payload, { getState }) => {
     const state = getState();
