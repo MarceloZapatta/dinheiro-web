@@ -85,6 +85,13 @@ export default function Transactions() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {transactions.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center">
+                  Nenhuma movimentação encontrada.
+                </TableCell>
+              </TableRow>
+            )}
             {transactions.map((transaction) => (
               <TableRow
                 key={transaction.id}

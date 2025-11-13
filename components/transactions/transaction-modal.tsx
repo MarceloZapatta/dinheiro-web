@@ -22,6 +22,7 @@ import { fetchCategories } from "@/services/categories";
 import AccountSelect from "../ui/accounts/account-select";
 import CategorySelect from "../ui/categories/categories-select";
 import {
+  deleteTransaction,
   storeTransaction,
   TransactionData,
   updateTransaction,
@@ -29,6 +30,17 @@ import {
 import DatePicker from "../ui/date-picker";
 import { DevTool } from "@hookform/devtools";
 import TypeRadioGroup from "../ui/transactions/type-radio-group";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 export default function TransactionModal() {
   const transactionEdit = useStoreState((state) => state.transactionEdit);
@@ -64,6 +76,16 @@ export default function TransactionModal() {
       await storeTransaction(data);
     }
 
+    fetchTransactions();
+    toggleTransactionModal();
+    setLoading(false);
+  };
+
+  const handleDeleteTransaction = async () => {
+    if (!transactionEdit) return;
+
+    setLoading(true);
+    await deleteTransaction(transactionEdit.id);
     fetchTransactions();
     toggleTransactionModal();
     setLoading(false);
@@ -159,6 +181,29 @@ export default function TransactionModal() {
                     Cancelar
                   </Button>
                 </DialogClose>
+                {transactionEdit && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline">Deletar</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Tem certeza que deseja excluir?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Esta ação não pode ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteTransaction}>
+                          {loading ? <Spinner /> : "Deletar"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
                 <Button type="submit" disabled={loading}>
                   {loading ? <Spinner /> : "Salvar"}
                 </Button>
