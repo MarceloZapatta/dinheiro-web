@@ -59,7 +59,7 @@ export default function Transactions() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-16 bg-white dark:bg-black sm:items-start">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-4 bg-white dark:bg-black sm:items-start">
         <div className="flex justify-between w-full">
           <h1 className="text-2xl pb-5">Movimentações</h1>
           <Button onClick={() => openAddNewTransactionModal()}>
@@ -78,16 +78,14 @@ export default function Transactions() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Descrição</TableHead>
-              <TableHead>Conta</TableHead>
-              <TableHead>Categoria</TableHead>
+              <TableHead>Descrição</TableHead>
               <TableHead className="text-right">Valor</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {transactions.length === 0 && (
               <TableRow>
-                <TableCell colSpan={4} className="text-center">
+                <TableCell colSpan={2} className="text-center">
                   Nenhuma movimentação encontrada.
                 </TableCell>
               </TableRow>
@@ -99,17 +97,25 @@ export default function Transactions() {
               >
                 <TableCell className="font-medium">
                   {transaction.descricao}
-                </TableCell>
-                <TableCell>{transaction.conta.nome}</TableCell>
-                <TableCell>
-                  <span className="flex">
-                    <Circle
-                      color={transaction.categoria.cor.hexadecimal}
-                      size={14}
-                      className="mr-2 mt-1"
-                    />
-                    {transaction.categoria.nome}
-                  </span>
+                  <br />
+                  <div className="flex gap-2">
+                    <span className="flex">
+                      <Circle
+                        color={transaction.conta.cor.hexadecimal}
+                        size={14}
+                        className="mr-2 mt-1"
+                      />
+                      {transaction.conta.nome}
+                    </span>
+                    <span className="flex">
+                      <Circle
+                        color={transaction.categoria.cor.hexadecimal}
+                        size={14}
+                        className="mr-2 mt-1"
+                      />
+                      {transaction.categoria.nome}
+                    </span>
+                  </div>
                 </TableCell>
                 <TableCell className="text-right">
                   {Number(transaction.valor).toLocaleString("pt-BR", {
