@@ -70,9 +70,7 @@ export default function TransactionModal() {
   };
 
   useEffect(() => {
-    if (!open) {
-      methods.reset();
-    } else if (transactionEdit) {
+    if (transactionEdit) {
       methods.reset({
         data_transacao: transactionEdit.data_transacao,
         descricao: transactionEdit.descricao,
@@ -80,6 +78,15 @@ export default function TransactionModal() {
         conta_id: String(transactionEdit.conta.id),
         categoria_id: String(transactionEdit.categoria.id),
         despesa: transactionEdit.valor < 1 ? "1" : "0",
+      });
+    } else {
+      methods.reset({
+        data_transacao: new Date().toISOString().split("T")[0],
+        descricao: "",
+        valor: 0,
+        conta_id: "",
+        categoria_id: "",
+        despesa: "1",
       });
     }
   }, [methods, open, transactionEdit]);
@@ -110,7 +117,9 @@ export default function TransactionModal() {
             <DevTool control={methods.control} />
             <form onSubmit={methods.handleSubmit(handleSaveTransaction)}>
               <DialogHeader>
-                <DialogTitle>Adicionar transação</DialogTitle>
+                <DialogTitle>
+                  {transactionEdit ? "Editar transação" : "Adicionar transação"}
+                </DialogTitle>
                 <DialogDescription>
                   Crie uma nova transação preenchendo o formulário abaixo.
                 </DialogDescription>

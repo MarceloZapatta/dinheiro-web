@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -26,16 +25,14 @@ export default function Transactions() {
   const movePreviousTransactionsPeriod = useStoreActions(
     (actions) => actions.movePreviousTransactionsPeriod
   );
-  const editTransaction = useStoreActions(
-    (actions) => actions.editTransaction
-  );
+  const editTransaction = useStoreActions((actions) => actions.editTransaction);
 
   const fetchTransactions = useStoreActions(
     (actions) => actions.fetchTransactions
   );
 
-  const toggleTransactionModal = useStoreActions(
-    (actions) => actions.toggleTransactionModal
+  const openAddNewTransactionModal = useStoreActions(
+    (actions) => actions.openAddNewTransactionModal
   );
 
   const handleNextPeriod = () => {
@@ -65,7 +62,7 @@ export default function Transactions() {
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex justify-between w-full">
           <h1 className="text-2xl pb-5">Movimentações</h1>
-          <Button onClick={() => toggleTransactionModal()}>
+          <Button onClick={() => openAddNewTransactionModal()}>
             <Plus />
           </Button>
         </div>
@@ -79,7 +76,6 @@ export default function Transactions() {
           </Button>
         </div>
         <Table>
-          <TableCaption>Movimentações do mês</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Descrição</TableHead>

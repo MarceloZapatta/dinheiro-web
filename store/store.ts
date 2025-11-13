@@ -23,6 +23,7 @@ import {
 export interface StoreModel {
   transactionModalOpen: boolean;
   toggleTransactionModal: Action<StoreModel, void>;
+  openAddNewTransactionModal: Thunk<StoreModel, void>;
   accounts: Account[];
   setAccounts: Action<StoreModel, Account[]>;
   categories: Category[];
@@ -44,6 +45,10 @@ export default createStore<StoreModel>({
   transactionModalOpen: false,
   toggleTransactionModal: action((state) => {
     state.transactionModalOpen = !state.transactionModalOpen;
+  }),
+  openAddNewTransactionModal: thunk((actions) => {
+    actions.setTransactionEdit(null);
+    actions.toggleTransactionModal();
   }),
   accounts: [],
   setAccounts: action((state, payload) => {
