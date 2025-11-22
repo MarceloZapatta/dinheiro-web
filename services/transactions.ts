@@ -128,7 +128,7 @@ export async function fetchImportTransactions(
 export async function confirmImportTransactions(
   importId: number
 ): Promise<void> {
-  const res = await postApi(`transactions/import/${importId}/confirm`, {});
+  const res = await postApi(`transactions/import/${importId}/confirm-all`, {});
 
   if (!res.ok) {
     console.error("Confirming imported transactions failed");

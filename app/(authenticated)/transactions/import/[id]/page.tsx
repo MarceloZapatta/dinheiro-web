@@ -12,16 +12,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchImportTransactions } from "@/services/transactions";
+import {
+  confirmImportTransactions,
+  fetchImportTransactions,
+} from "@/services/transactions";
 import { useStoreActions } from "@/store/hooks";
 import { Transaction } from "@/types/transaction";
 import { Circle } from "lucide-react";
-import router from "next/dist/shared/lib/router/router";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function Import() {
+  const router = useRouter();
   const params = useParams();
   const [importTransactions, setImportTransactions] = useState<Transaction[]>(
     []
@@ -35,6 +38,11 @@ export default function Import() {
     };
     handleFetchImportTransactions();
   }, [params.id]);
+
+  const handleConfirmImport = async () => {
+    await confirmImportTransactions(Number(params.id));
+    router.push("/transactions");
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -92,9 +100,16 @@ export default function Import() {
             ))}
           </TableBody>
         </Table>
-        <div>
-          <Button className="mt-4" onClick={() => router.push("/transactions")}>
-            Confirmar tudo
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            className="mt-4"
+            onClick={() => router.push("/transactions")}
+          >
+            Cancelar importação
+          </Button>
+          <Button className="mt-4" onClick={() => handleConfirmImport()}>
+            Confirmar importação
           </Button>
         </div>
       </main>
