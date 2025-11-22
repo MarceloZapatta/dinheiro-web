@@ -11,11 +11,15 @@ import {
 } from "@/components/ui/select";
 import { useStoreState } from "@/store/hooks";
 import { Circle } from "lucide-react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 export default function CategorySelect() {
   const { control } = useFormContext();
-  const categories = useStoreState((state) => state.categories);
+  const despesa = useWatch({ control, name: "despesa" });
+  const storeCategories = useStoreState((state) => state.categories);
+
+  const categories =
+    despesa === "0" ? storeCategories.income : storeCategories.expense;
 
   return (
     <Controller

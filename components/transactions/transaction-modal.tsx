@@ -18,7 +18,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { FormProvider, useForm } from "react-hook-form";
 import NumberInput from "@/components/ui/number-input";
 import { fetchAccounts } from "@/services/accounts";
-import { fetchCategories } from "@/services/categories";
 import AccountSelect from "../ui/accounts/account-select";
 import CategorySelect from "../ui/categories/categories-select";
 import {
@@ -60,7 +59,7 @@ export default function TransactionModal() {
     (actions) => actions.toggleTransactionModal
   );
   const setAccounts = useStoreActions((actions) => actions.setAccounts);
-  const setCategories = useStoreActions((actions) => actions.setCategories);
+  const fetchCategories = useStoreActions((actions) => actions.fetchCategories);
   const fetchTransactions = useStoreActions(
     (actions) => actions.fetchTransactions
   );
@@ -122,14 +121,8 @@ export default function TransactionModal() {
     }
     loadAccounts();
 
-    async function loadCategories() {
-      const response = await fetchCategories();
-      if (response) {
-        setCategories(response.data);
-      }
-    }
-    loadCategories();
-  }, [setAccounts, setCategories]);
+    fetchCategories();
+  }, [setAccounts, fetchCategories, transactionEdit]);
 
   return (
     <div className="w-full p-6 flex justify-center">

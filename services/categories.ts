@@ -2,7 +2,10 @@ import { retrieveToken } from "./auth";
 import { Category } from "@/types/category";
 
 interface CategoryResponse {
-  data: Category[];
+  data: {
+    expense: Category[];
+    income: Category[];
+  };
 }
 
 export async function fetchCategories(): Promise<CategoryResponse | undefined> {

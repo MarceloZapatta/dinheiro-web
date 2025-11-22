@@ -10,9 +10,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
-import { ChevronLeft, ChevronRight, Circle, Plus } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+  Minus,
+  Plus,
+} from "lucide-react";
 import { useEffect } from "react";
 import { format, parse } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import Link from "next/link";
 
 export default function Transactions() {
   const transactions = useStoreState((state) => state.transactions);
@@ -62,9 +75,34 @@ export default function Transactions() {
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-4 bg-white dark:bg-black sm:items-start">
         <div className="flex justify-between w-full">
           <h1 className="text-2xl pb-5">Movimentações</h1>
-          <Button onClick={() => openAddNewTransactionModal()}>
-            <Plus />
-          </Button>
+          <Popover>
+            <PopoverTrigger>
+              <Button>
+                <Plus />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-32">
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant={"secondary"}
+                  onClick={() => openAddNewTransactionModal()}
+                >
+                  <Minus /> Despesa
+                </Button>
+                <Button
+                  variant={"secondary"}
+                  onClick={() => openAddNewTransactionModal()}
+                >
+                  <Plus /> Receita
+                </Button>
+                <Link href={"/transactions/import"}>
+                  <Button variant={"secondary"}>
+                    <ArrowDown /> Importar
+                  </Button>
+                </Link>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="flex justify-between w-full p-4">
           <Button variant={"ghost"} onClick={handlePreviousPeriod}>

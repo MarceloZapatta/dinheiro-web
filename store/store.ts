@@ -1,3 +1,4 @@
+import { fetchCategories } from "@/services/categories";
 import { fetchTransactions } from "@/services/transactions";
 import { Account } from "@/types/account";
 import { Category } from "@/types/category";
@@ -20,14 +21,20 @@ import {
   thunk,
 } from "easy-peasy";
 
+interface Categories {
+  expense: Category[];
+  income: Category[];
+}
+
 export interface StoreModel {
   transactionModalOpen: boolean;
   toggleTransactionModal: Action<StoreModel, void>;
   openAddNewTransactionModal: Thunk<StoreModel, void>;
   accounts: Account[];
   setAccounts: Action<StoreModel, Account[]>;
-  categories: Category[];
-  setCategories: Action<StoreModel, Category[]>;
+  categories: Categories;
+  setCategories: Action<StoreModel, Categories>;
+  fetchCategories: Thunk<StoreModel>;
   transactions: Transaction[];
   setTransactions: Action<StoreModel, Transaction[]>;
   transactionEdit: Transaction | null;
@@ -77,6 +84,14 @@ export default createStore<StoreModel>({
     const response = await fetchTransactions(startPeriod, endPeriod);
     if (response?.data) {
       actions.setTransactions(response.data);
+    }
+  }),
+  fetchCategories: thunk(async (actions) => {
+    const response = await fetchCategories();
+    if (response?.data) {
+      actions.setCategories(response.data);
+    } else {
+      actions.setCategories({ expense: [], income: [] });
     }
   }),
   transactionsStartPeriod: format(startOfMonth(new Date()), "yyyy-MM-dd"),
