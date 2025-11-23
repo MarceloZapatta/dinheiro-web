@@ -32,7 +32,7 @@ export interface StoreModel {
   openAddNewTransactionModal: Thunk<StoreModel, void>;
   accounts: Account[];
   setAccounts: Action<StoreModel, Account[]>;
-  categories: Categories;
+  categories: Categories | null;
   setCategories: Action<StoreModel, Categories>;
   fetchCategories: Thunk<StoreModel>;
   transactions: Transaction[];
@@ -61,7 +61,7 @@ export default createStore<StoreModel>({
   setAccounts: action((state, payload) => {
     state.accounts = payload;
   }),
-  categories: [],
+  categories: null,
   setCategories: action((state, payload) => {
     state.categories = payload;
   }),

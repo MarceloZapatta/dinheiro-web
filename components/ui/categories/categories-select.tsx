@@ -18,6 +18,10 @@ export default function CategorySelect() {
   const despesa = useWatch({ control, name: "despesa" });
   const storeCategories = useStoreState((state) => state.categories);
 
+  if (!storeCategories) {
+    return null;
+  }
+
   const categories =
     despesa === "0" ? storeCategories.income : storeCategories.expense;
 
