@@ -9,6 +9,7 @@ cp .env.local .env.local.backup
 # Use deploy env
 cp .env.deploy.local .env.local
 
+export $(grep -v '^#' .env.local | xargs)
 
 # Set the local server IP (edit as needed)
 LOCAL_SERVER_IP=${LOCAL_SERVER_IP:-"192.168.1.100"}
