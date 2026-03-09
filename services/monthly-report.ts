@@ -1,21 +1,18 @@
 import { getApi, ApiResponse } from "./api";
 
 export interface MonthlyReportData {
-  totalIncome: number;
-  totalOutcome: number;
-  balance: number;
-  categories: {
-    name: string;
-    value: number;
-    color: string;
-  }[];
+  income_total: number;
+  outcome_total: number;
 }
 
 export async function fetchMonthlyReport(
-  month: number,
-  year: number
+  startDate: string,
+  endDate: string,
 ): Promise<MonthlyReportData> {
-  const response = await getApi("reports/monthly", { month, year });
+  const response = await getApi("reports/monthly", {
+    start_date: startDate,
+    end_date: endDate,
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch monthly report");
   }

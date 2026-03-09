@@ -1,53 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { MonthFilter } from "@/components/ui/month-filter";
 import { PizzaChart } from "@/components/ui/pizza-chart";
-import { fetchMonthlyReport, MonthlyReportData } from "@/services/monthly-report";
-import { format, parseISO } from "date-fns";
+import { format, parse } from "date-fns";
 import { Spinner } from "@/components/ui/spinner";
+import { useStoreActions, useStoreState } from "@/store/hooks";
 
 export default function MonthlyReport() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [reportData, setReportData] = useState<MonthlyReportData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const reportData = useStoreState((state) => state.monthlyReport);
+  const loading = useStoreState((state) => state.monthlyReportLoading);
+  const error = useStoreState((state) => state.monthlyReportError);
+  const reportStartPeriod = useStoreState((state) => state.reportStartPeriod);
 
-  const fetchReport = async (date: Date) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const month = date.getMonth() + 1; // getMonth() is 0-indexed
-      const year = date.getFullYear();
-      const data = await fetchMonthlyReport(month, year);
-      setReportData(data);
-    } catch (err) {
-      setError("Failed to load monthly report.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchMonthlyReport = useStoreActions(
+    (actions) => actions.fetchMonthlyReport,
+  );
+  const moveNextReportPeriod = useStoreActions(
+    (actions) => actions.moveNextReportPeriod,
+  );
+  const movePreviousReportPeriod = useStoreActions(
+    (actions) => actions.movePreviousReportPeriod,
+  );
 
   useEffect(() => {
-    fetchReport(currentDate);
-  }, [currentDate]);
+    fetchMonthlyReport();
+  }, [fetchMonthlyReport]);
 
   const handleNextPeriod = () => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1);
-      return newDate;
-    });
+    moveNextReportPeriod();
   };
 
   const handlePreviousPeriod = () => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1);
-      return newDate;
-    });
+    movePreviousReportPeriod();
   };
 
-  const currentPeriodFormatted = format(currentDate, "MMMM yyyy");
+  const currentPeriodFormatted = format(
+    parse(reportStartPeriod, "yyyy-MM-dd", new Date()),
+    "MMMM yyyy",
+  );
 
   if (loading) {
     return (
@@ -77,27 +68,25 @@ export default function MonthlyReport() {
         {reportData && (
           <div className="w-full mt-4">
             <div className="flex justify-between items-center mb-4">
-              <p className="text-lg font-semibold">Receita Total: {reportData.totalIncome.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-              <p className="text-lg font-semibold">Despesa Total: {reportData.totalOutcome.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+              <p className="text-lg font-semibold">
+                Receita Total:{" "}
+                {reportData.income_total.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </p>
+              <p className="text-lg font-semibold">
+                Despesa Total:{" "}
+                {reportData.outcome_total.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </p>
             </div>
-            <p className="text-xl font-bold text-center mb-6">Saldo: {reportData.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-            <PizzaChart income={reportData.totalIncome} outcome={reportData.totalOutcome} />
-            <h2 className="text-xl mt-8 mb-4">Gastos por Categoria</h2>
-            {reportData.categories.length === 0 ? (
-              <p>Nenhuma categoria encontrada para este período.</p>
-            ) : (
-              <ul>
-                {reportData.categories.map((category, index) => (
-                  <li key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
-                    <span className="flex items-center">
-                      <span style={{ backgroundColor: category.color }} className="inline-block w-3 h-3 rounded-full mr-2"></span>
-                      {category.name}
-                    </span>
-                    <span>{category.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <PizzaChart
+              income={reportData.income_total}
+              outcome={reportData.outcome_total}
+            />
           </div>
         )}
       </main>

@@ -5,6 +5,7 @@ import "../globals.css";
 import { StoreProvider } from "easy-peasy";
 import store from "@/store/store";
 import TransactionModal from "@/components/transactions/transaction-modal";
+import { Menu } from "@/components/ui/menu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <>
       <TransactionModal />
+      <Menu />
       {children}
     </>
   );
