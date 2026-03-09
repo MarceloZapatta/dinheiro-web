@@ -10,12 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
-import {
-  ArrowDown,
-  Circle,
-  Minus,
-  Plus,
-} from "lucide-react";
+import { ArrowDown, Circle, Minus, Plus } from "lucide-react";
 import { useEffect } from "react";
 import { format, parse } from "date-fns";
 import {
@@ -27,24 +22,28 @@ import Link from "next/link";
 import { MonthFilter } from "@/components/ui/month-filter";
 
 export default function Transactions() {
-  const transactions = useStoreState((state) => state.transactions);
+  const transactions = useStoreState(
+    (state) => state.transactions.transactions,
+  );
   const transactionsStartPeriod = useStoreState(
-    (state) => state.transactionsStartPeriod
+    (state) => state.transactions.transactionsStartPeriod,
   );
   const moveNextTransactionsPeriod = useStoreActions(
-    (actions) => actions.moveNextTransactionsPeriod
+    (actions) => actions.transactions.moveNextTransactionsPeriod,
   );
   const movePreviousTransactionsPeriod = useStoreActions(
-    (actions) => actions.movePreviousTransactionsPeriod
+    (actions) => actions.transactions.movePreviousTransactionsPeriod,
   );
-  const editTransaction = useStoreActions((actions) => actions.editTransaction);
+  const editTransaction = useStoreActions(
+    (actions) => actions.transactions.editTransaction,
+  );
 
   const fetchTransactions = useStoreActions(
-    (actions) => actions.fetchTransactions
+    (actions) => actions.transactions.fetchTransactions,
   );
 
   const openAddNewTransactionModal = useStoreActions(
-    (actions) => actions.openAddNewTransactionModal
+    (actions) => actions.transactions.openAddNewTransactionModal,
   );
 
   const handleNextPeriod = () => {
@@ -57,7 +56,7 @@ export default function Transactions() {
 
   const currentPeriod = format(
     parse(transactionsStartPeriod, "yyyy-MM-dd", new Date()),
-    "MMMM yyyy"
+    "MMMM yyyy",
   );
 
   useEffect(() => {

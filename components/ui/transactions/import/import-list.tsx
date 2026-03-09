@@ -23,9 +23,11 @@ export default function ImportList() {
   const router = useRouter();
   const params = useParams();
   const [importTransactions, setImportTransactions] = useState<Transaction[]>(
-    []
+    [],
   );
-  const editTransaction = useStoreActions((actions) => actions.editTransaction);
+  const editTransaction = useStoreActions(
+    (actions) => actions.transactions.editTransaction,
+  );
 
   useEffect(() => {
     const handleFetchImportTransactions = async () => {

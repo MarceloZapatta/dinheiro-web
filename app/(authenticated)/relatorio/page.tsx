@@ -8,19 +8,21 @@ import { Spinner } from "@/components/ui/spinner";
 import { useStoreActions, useStoreState } from "@/store/hooks";
 
 export default function MonthlyReport() {
-  const reportData = useStoreState((state) => state.monthlyReport);
-  const loading = useStoreState((state) => state.monthlyReportLoading);
-  const error = useStoreState((state) => state.monthlyReportError);
-  const reportStartPeriod = useStoreState((state) => state.reportStartPeriod);
+  const reportData = useStoreState((state) => state.reports.monthlyReport);
+  const loading = useStoreState((state) => state.reports.monthlyReportLoading);
+  const error = useStoreState((state) => state.reports.monthlyReportError);
+  const reportStartPeriod = useStoreState(
+    (state) => state.reports.reportStartPeriod,
+  );
 
   const fetchMonthlyReport = useStoreActions(
-    (actions) => actions.fetchMonthlyReport,
+    (actions) => actions.reports.fetchMonthlyReport,
   );
   const moveNextReportPeriod = useStoreActions(
-    (actions) => actions.moveNextReportPeriod,
+    (actions) => actions.reports.moveNextReportPeriod,
   );
   const movePreviousReportPeriod = useStoreActions(
-    (actions) => actions.movePreviousReportPeriod,
+    (actions) => actions.reports.movePreviousReportPeriod,
   );
 
   useEffect(() => {

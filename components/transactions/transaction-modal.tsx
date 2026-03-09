@@ -42,7 +42,9 @@ import {
 } from "../ui/alert-dialog";
 
 export default function TransactionModal() {
-  const transactionEdit = useStoreState((state) => state.transactionEdit);
+  const transactionEdit = useStoreState(
+    (state) => state.transactions.transactionEdit,
+  );
 
   const methods = useForm<TransactionData>({
     defaultValues: {
@@ -54,14 +56,20 @@ export default function TransactionModal() {
       despesa: "1",
     },
   });
-  const open = useStoreState((state) => state.transactionModalOpen);
-  const toggleTransactionModal = useStoreActions(
-    (actions) => actions.toggleTransactionModal
+  const open = useStoreState(
+    (state) => state.transactions.transactionModalOpen,
   );
-  const setAccounts = useStoreActions((actions) => actions.setAccounts);
-  const fetchCategories = useStoreActions((actions) => actions.fetchCategories);
+  const toggleTransactionModal = useStoreActions(
+    (actions) => actions.transactions.toggleTransactionModal,
+  );
+  const setAccounts = useStoreActions(
+    (actions) => actions.accounts.setAccounts,
+  );
+  const fetchCategories = useStoreActions(
+    (actions) => actions.categories.fetchCategories,
+  );
   const fetchTransactions = useStoreActions(
-    (actions) => actions.fetchTransactions
+    (actions) => actions.transactions.fetchTransactions,
   );
 
   const [loading, setLoading] = useState(false);

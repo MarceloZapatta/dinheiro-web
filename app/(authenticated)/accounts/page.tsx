@@ -14,11 +14,15 @@ import { Circle, Plus } from "lucide-react";
 import { useEffect } from "react";
 
 export default function Accounts() {
-  const accounts = useStoreState((state) => state.accounts);
-  const fetchAccounts = useStoreActions((actions) => actions.fetchAccounts);
-  const editAccount = useStoreActions((actions) => actions.editAccount);
+  const accounts = useStoreState((state) => state.accounts.accounts);
+  const fetchAccounts = useStoreActions(
+    (actions) => actions.accounts.fetchAccounts,
+  );
+  const editAccount = useStoreActions(
+    (actions) => actions.accounts.editAccount,
+  );
   const openAddNewAccountModal = useStoreActions(
-    (actions) => actions.openAddNewAccountModal,
+    (actions) => actions.accounts.openAddNewAccountModal,
   );
 
   useEffect(() => {

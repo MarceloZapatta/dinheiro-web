@@ -15,7 +15,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 export default function AccountSelect() {
   const { control } = useFormContext();
-  const accounts = useStoreState((state) => state.accounts);
+  const accounts = useStoreState((state) => state.accounts.accounts);
 
   return (
     <Controller

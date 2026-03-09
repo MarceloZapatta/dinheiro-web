@@ -40,9 +40,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import ColorSelect from "../ui/colors/color-select";
 
 export default function AccountModal() {
-  const accountEdit = useStoreState((state) => state.accountEdit);
+  const accountEdit = useStoreState((state) => state.accounts.accountEdit);
 
   const methods = useForm<AccountData>({
     defaultValues: {
@@ -51,12 +52,18 @@ export default function AccountModal() {
       cor_id: 0,
     },
   });
-  const open = useStoreState((state) => state.transactionModalOpen);
-  const toggleTransactionModal = useStoreActions(
-    (actions) => actions.toggleTransactionModal,
+  const open = useStoreState(
+    (state) => state.transactions.transactionModalOpen,
   );
-  const setAccounts = useStoreActions((actions) => actions.setAccounts);
-  const fetchCategories = useStoreActions((actions) => actions.fetchCategories);
+  const toggleTransactionModal = useStoreActions(
+    (actions) => actions.transactions.toggleTransactionModal,
+  );
+  const setAccounts = useStoreActions(
+    (actions) => actions.accounts.setAccounts,
+  );
+  const fetchCategories = useStoreActions(
+    (actions) => actions.categories.fetchCategories,
+  );
 
   const [loading, setLoading] = useState(false);
 
@@ -129,31 +136,20 @@ export default function AccountModal() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <TypeRadioGroup name="despesa" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description-form">Data</Label>
-                  <DatePicker name="data_transacao" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description-form">Descrição</Label>
+                  <Label htmlFor="description-form">Nome</Label>
                   <Input
                     id="description-form"
-                    {...methods.register("descricao")}
+                    {...methods.register("nome")}
                     required
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="value-form">Valor</Label>
-                  <NumberInput {...methods.register("valor")} />
+                  <Label htmlFor="value-form">Saldo inicial</Label>
+                  <NumberInput {...methods.register("saldo_inicial")} />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="account-form">Conta</Label>
-                  <AccountSelect />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="category-form">Categoria</Label>
-                  <CategorySelect />
+                  <Label htmlFor="account-form">Cor</Label>
+                  <ColorSelect />
                 </div>
               </div>
               <DialogFooter>
