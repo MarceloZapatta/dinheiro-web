@@ -1,4 +1,8 @@
 import { fetchCategories } from "@/services/categories";
+import {
+  fetchMonthlyReport,
+  MonthlyReportData,
+} from "@/services/monthly-report";
 import { fetchTransactions } from "@/services/transactions";
 import { Account } from "@/types/account";
 import { Category } from "@/types/category";
@@ -46,6 +50,19 @@ export interface StoreModel {
   editTransaction: Thunk<StoreModel, Transaction>;
   moveNextTransactionsPeriod: Thunk<StoreModel>;
   movePreviousTransactionsPeriod: Thunk<StoreModel>;
+  // Monthly Report
+  monthlyReport: MonthlyReportData | null;
+  monthlyReportLoading: boolean;
+  monthlyReportError: string | null;
+  setMonthlyReport: Action<StoreModel, MonthlyReportData | null>;
+  setMonthlyReportLoading: Action<StoreModel, boolean>;
+  setMonthlyReportError: Action<StoreModel, string | null>;
+  reportStartPeriod: string;
+  reportEndPeriod: string;
+  setReportPeriod: Action<StoreModel, { start: string; end: string }>;
+  fetchMonthlyReport: Thunk<StoreModel>;
+  moveNextReportPeriod: Thunk<StoreModel>;
+  movePreviousReportPeriod: Thunk<StoreModel>;
 }
 
 export default createStore<StoreModel>({
@@ -106,12 +123,55 @@ export default createStore<StoreModel>({
   movePreviousTransactionsPeriod: thunk((actions, _payload, { getState }) => {
     moveTransactionsPeriod(actions, getState, false);
   }),
+  // Monthly Report
+  monthlyReport: null,
+  monthlyReportLoading: false,
+  monthlyReportError: null,
+  setMonthlyReport: action((state, payload) => {
+    state.monthlyReport = payload;
+  }),
+  setMonthlyReportLoading: action((state, payload) => {
+    state.monthlyReportLoading = payload;
+  }),
+  setMonthlyReportError: action((state, payload) => {
+    state.monthlyReportError = payload;
+  }),
+  reportStartPeriod: format(startOfMonth(new Date()), "yyyy-MM-dd"),
+  reportEndPeriod: format(endOfMonth(new Date()), "yyyy-MM-dd"),
+  setReportPeriod: action((state, payload) => {
+    state.reportStartPeriod = payload.start;
+    state.reportEndPeriod = payload.end;
+  }),
+  fetchMonthlyReport: thunk(async (actions, _payload, { getState }) => {
+    const state = getState();
+    actions.setMonthlyReportLoading(true);
+    actions.setMonthlyReportError(null);
+    try {
+      const data = await fetchMonthlyReport(
+        state.reportStartPeriod,
+        state.reportEndPeriod,
+      );
+      console.log(data, "setando a data");
+      actions.setMonthlyReport(data);
+    } catch {
+      actions.setMonthlyReportError("Failed to load monthly report.");
+      actions.setMonthlyReport(null);
+    } finally {
+      actions.setMonthlyReportLoading(false);
+    }
+  }),
+  moveNextReportPeriod: thunk((actions, _payload, { getState }) => {
+    moveReportPeriod(actions, getState, true);
+  }),
+  movePreviousReportPeriod: thunk((actions, _payload, { getState }) => {
+    moveReportPeriod(actions, getState, false);
+  }),
 });
 
 const moveTransactionsPeriod = (
   actions: Actions<StoreModel>,
   getState: () => StateMapper<FilterActionTypes<StoreModel>>,
-  next = false
+  next = false,
 ) => {
   const state = getState();
   const start = parseISO(state.transactionsStartPeriod);
@@ -123,4 +183,21 @@ const moveTransactionsPeriod = (
     end: format(prevEnd, "yyyy-MM-dd"),
   });
   actions.fetchTransactions();
+};
+
+const moveReportPeriod = (
+  actions: Actions<StoreModel>,
+  getState: () => StateMapper<FilterActionTypes<StoreModel>>,
+  next = false,
+) => {
+  const state = getState();
+  const start = parseISO(state.reportStartPeriod);
+  const end = parseISO(state.reportEndPeriod);
+  const newStart = startOfMonth(addMonths(start, next ? 1 : -1));
+  const newEnd = endOfMonth(addMonths(end, next ? 1 : -1));
+  actions.setReportPeriod({
+    start: format(newStart, "yyyy-MM-dd"),
+    end: format(newEnd, "yyyy-MM-dd"),
+  });
+  actions.fetchMonthlyReport();
 };
