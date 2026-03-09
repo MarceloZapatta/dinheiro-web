@@ -12,8 +12,6 @@ import {
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import {
   ArrowDown,
-  ChevronLeft,
-  ChevronRight,
   Circle,
   Minus,
   Plus,
@@ -26,6 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
+import { MonthFilter } from "@/components/ui/month-filter";
 
 export default function Transactions() {
   const transactions = useStoreState((state) => state.transactions);
@@ -60,9 +59,6 @@ export default function Transactions() {
     parse(transactionsStartPeriod, "yyyy-MM-dd", new Date()),
     "MMMM yyyy"
   );
-
-  const capitalizedPeriod =
-    currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1);
 
   useEffect(() => {
     (async () => {
@@ -104,15 +100,11 @@ export default function Transactions() {
             </PopoverContent>
           </Popover>
         </div>
-        <div className="flex justify-between w-full p-4">
-          <Button variant={"ghost"} onClick={handlePreviousPeriod}>
-            <ChevronLeft />
-          </Button>
-          <span>{capitalizedPeriod}</span>
-          <Button variant={"ghost"} onClick={handleNextPeriod}>
-            <ChevronRight />
-          </Button>
-        </div>
+        <MonthFilter
+          currentPeriod={currentPeriod}
+          onNextPeriod={handleNextPeriod}
+          onPreviousPeriod={handlePreviousPeriod}
+        />
         <Table>
           <TableHeader>
             <TableRow>
