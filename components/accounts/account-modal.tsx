@@ -24,11 +24,7 @@ import {
   storeAccount,
   updateAccount,
 } from "@/services/accounts";
-import AccountSelect from "../ui/accounts/account-select";
-import CategorySelect from "../ui/categories/categories-select";
-import DatePicker from "../ui/date-picker";
 import { DevTool } from "@hookform/devtools";
-import TypeRadioGroup from "../ui/transactions/type-radio-group";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,18 +48,13 @@ export default function AccountModal() {
       cor_id: 0,
     },
   });
-  const open = useStoreState(
-    (state) => state.transactions.transactionModalOpen,
+  const open = useStoreState((state) => state.accounts.accountModalOpen);
+  const toggleAccountModal = useStoreActions(
+    (actions) => actions.accounts.toggleAccountModal,
   );
-  const toggleTransactionModal = useStoreActions(
-    (actions) => actions.transactions.toggleTransactionModal,
-  );
-  const setAccounts = useStoreActions(
-    (actions) => actions.accounts.setAccounts,
-  );
-  const fetchCategories = useStoreActions(
-    (actions) => actions.categories.fetchCategories,
-  );
+  const setColors = useStoreActions((actions) => actions.colors.setColors);
+
+  const fetchColors = useStoreActions((actions) => actions.colors.fetchColors);
 
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +68,7 @@ export default function AccountModal() {
     }
 
     fetchAccounts();
-    toggleTransactionModal();
+    toggleAccountModal();
     setLoading(false);
   };
 
@@ -87,7 +78,7 @@ export default function AccountModal() {
     setLoading(true);
     await deleteAccount(accountEdit.id);
     fetchAccounts();
-    toggleTransactionModal();
+    toggleAccountModal();
     setLoading(false);
   };
 
@@ -108,20 +99,18 @@ export default function AccountModal() {
   }, [methods, open, accountEdit]);
 
   useEffect(() => {
-    async function loadAccounts() {
-      const response = await fetchAccounts();
+    async function loadColors() {
+      const response = await fetchColors();
       if (response) {
-        setAccounts(response.data);
+        setColors(response.data);
       }
     }
-    loadAccounts();
-
-    fetchCategories();
-  }, [setAccounts, fetchCategories, accountEdit]);
+    loadColors();
+  }, [setColors, fetchColors, accountEdit]);
 
   return (
     <div className="w-full p-6 flex justify-center">
-      <Dialog open={open} onOpenChange={() => toggleTransactionModal()}>
+      <Dialog open={open} onOpenChange={() => toggleAccountModal()}>
         <DialogContent className="sm:max-w-[425px]">
           <FormProvider {...methods}>
             <DevTool control={methods.control} />

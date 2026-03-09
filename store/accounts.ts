@@ -6,6 +6,8 @@ import { StoreModel } from "./store";
 export interface AccountsModel {
   accounts: Account[];
   accountEdit: Account | null;
+  accountModalOpen: boolean;
+  toggleAccountModal: Action<AccountsModel, void>;
   setAccounts: Action<AccountsModel, Account[]>;
   setAccountEdit: Action<AccountsModel, Account | null>;
   editAccount: Thunk<AccountsModel, Account>;
@@ -15,6 +17,10 @@ export interface AccountsModel {
 
 export const accountsStore: AccountsModel = {
   accounts: [],
+  accountModalOpen: false,
+  toggleAccountModal: action((state) => {
+    state.accountModalOpen = !state.accountModalOpen;
+  }),
   setAccounts: action((state, payload) => {
     state.accounts = payload;
   }),
@@ -31,9 +37,8 @@ export const accountsStore: AccountsModel = {
       actions.setAccounts(response.data);
     }
   }),
-  openAddNewAccountModal: thunk((actions, _payload, { getStoreActions }) => {
+  openAddNewAccountModal: thunk((actions) => {
     actions.setAccountEdit(null);
-    const storeActions = getStoreActions();
-    storeActions.transactions.toggleTransactionModal();
+    actions.toggleAccountModal();
   }),
 };

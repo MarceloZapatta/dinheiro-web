@@ -15,7 +15,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 export default function ColorSelect() {
   const { control } = useFormContext();
-  const colors = useStoreState((state) => state.colors);
+  const colors = useStoreState((state) => state.colors.colors);
 
   return (
     <Controller
