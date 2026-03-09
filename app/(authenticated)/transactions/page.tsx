@@ -12,32 +12,22 @@ import {
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import {
   ArrowDown,
-  ChevronLeft,
-  ChevronRight,
   Circle,
   Minus,
   Plus,
 } from "lucide-react";
 import { useEffect } from "react";
-import { format, parse } from "date-fns";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Link from "next/link";
+import MonthFilter from "@/components/month-filter";
 
 export default function Transactions() {
   const transactions = useStoreState((state) => state.transactions);
-  const transactionsStartPeriod = useStoreState(
-    (state) => state.transactionsStartPeriod
-  );
-  const moveNextTransactionsPeriod = useStoreActions(
-    (actions) => actions.moveNextTransactionsPeriod
-  );
-  const movePreviousTransactionsPeriod = useStoreActions(
-    (actions) => actions.movePreviousTransactionsPeriod
-  );
+
   const editTransaction = useStoreActions((actions) => actions.editTransaction);
 
   const fetchTransactions = useStoreActions(
@@ -47,22 +37,6 @@ export default function Transactions() {
   const openAddNewTransactionModal = useStoreActions(
     (actions) => actions.openAddNewTransactionModal
   );
-
-  const handleNextPeriod = () => {
-    moveNextTransactionsPeriod();
-  };
-
-  const handlePreviousPeriod = () => {
-    movePreviousTransactionsPeriod();
-  };
-
-  const currentPeriod = format(
-    parse(transactionsStartPeriod, "yyyy-MM-dd", new Date()),
-    "MMMM yyyy"
-  );
-
-  const capitalizedPeriod =
-    currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1);
 
   useEffect(() => {
     (async () => {
@@ -104,15 +78,7 @@ export default function Transactions() {
             </PopoverContent>
           </Popover>
         </div>
-        <div className="flex justify-between w-full p-4">
-          <Button variant={"ghost"} onClick={handlePreviousPeriod}>
-            <ChevronLeft />
-          </Button>
-          <span>{capitalizedPeriod}</span>
-          <Button variant={"ghost"} onClick={handleNextPeriod}>
-            <ChevronRight />
-          </Button>
-        </div>
+        <MonthFilter />
         <Table>
           <TableHeader>
             <TableRow>
