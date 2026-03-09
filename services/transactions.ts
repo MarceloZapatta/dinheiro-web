@@ -29,7 +29,7 @@ interface ImportTransactionsResponse {
 
 export async function fetchTransactions(
   startPeriod: string,
-  endPeriod: string
+  endPeriod: string,
 ): Promise<ApiResponse<Transaction[]>> {
   const res = await getApi("transactions", {
     date_start: startPeriod,
@@ -94,7 +94,7 @@ export async function deleteTransaction(id: number) {
 
 export async function importTransactionsFile(
   file: File,
-  type: "ofx" = "ofx"
+  type: "ofx" = "ofx",
 ): Promise<ApiResponse<ImportTransactionsResponse>> {
   console.log(file);
 
@@ -103,7 +103,7 @@ export async function importTransactionsFile(
     {
       file: file,
     },
-    true
+    true,
   );
 
   if (!res.ok) {
@@ -114,7 +114,7 @@ export async function importTransactionsFile(
 }
 
 export async function fetchImportTransactions(
-  importId: number
+  importId: number,
 ): Promise<ApiResponse<CheckImportTransactionsResponse>> {
   const res = await getApi(`transactions/import/${importId}`);
 
@@ -126,7 +126,7 @@ export async function fetchImportTransactions(
 }
 
 export async function confirmImportTransactions(
-  importId: number
+  importId: number,
 ): Promise<void> {
   const res = await postApi(`transactions/import/${importId}/confirm-all`, {});
 

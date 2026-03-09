@@ -1,3 +1,4 @@
+import { fetchAccounts } from "@/services/accounts";
 import { fetchCategories } from "@/services/categories";
 import {
   fetchMonthlyReport,
@@ -34,8 +35,13 @@ export interface StoreModel {
   transactionModalOpen: boolean;
   toggleTransactionModal: Action<StoreModel, void>;
   openAddNewTransactionModal: Thunk<StoreModel, void>;
+  openAddNewAccountModal: Thunk<StoreModel, void>;
   accounts: Account[];
+  accountEdit: Account | null;
   setAccounts: Action<StoreModel, Account[]>;
+  setAccountEdit: Action<StoreModel, Account | null>;
+  editAccount: Thunk<StoreModel, Account>;
+  fetchAccounts: Thunk<StoreModel>;
   categories: Categories | null;
   setCategories: Action<StoreModel, Categories>;
   fetchCategories: Thunk<StoreModel>;
@@ -74,9 +80,26 @@ export default createStore<StoreModel>({
     actions.setTransactionEdit(null);
     actions.toggleTransactionModal();
   }),
+  openAddNewAccountModal: thunk((actions) => {
+    actions.setAccountEdit(null);
+    actions.toggleTransactionModal();
+  }),
   accounts: [],
   setAccounts: action((state, payload) => {
     state.accounts = payload;
+  }),
+  fetchAccounts: thunk(async (actions) => {
+    const response = await fetchAccounts();
+    if (response?.data) {
+      actions.setAccounts(response.data);
+    }
+  }),
+  accountEdit: null,
+  setAccountEdit: action((state, payload) => {
+    state.accountEdit = payload;
+  }),
+  editAccount: thunk((actions, _payload: Account) => {
+    actions.setAccountEdit(_payload);
   }),
   categories: null,
   setCategories: action((state, payload) => {

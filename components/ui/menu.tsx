@@ -24,6 +24,12 @@ export function Menu() {
         >
           Relatório
         </Link>
+        <Link
+          href="/accounts"
+          className="text-gray-700 hover:text-blue-600 font-medium"
+        >
+          Contas
+        </Link>
       </div>
     </nav>
   );
