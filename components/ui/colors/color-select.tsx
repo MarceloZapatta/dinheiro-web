@@ -17,6 +17,10 @@ export default function ColorSelect() {
   const { control } = useFormContext();
   const colors = useStoreState((state) => state.colors.colors);
 
+  if (!colors) {
+    return null;
+  }
+
   return (
     <Controller
       name="cor_id"

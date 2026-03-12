@@ -72,7 +72,7 @@ export default function Transactions() {
           <h1 className="text-2xl pb-5">Movimentações</h1>
           <Popover>
             <PopoverTrigger>
-              <Button>
+              <Button asChild>
                 <Plus />
               </Button>
             </PopoverTrigger>

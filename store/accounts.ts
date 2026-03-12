@@ -30,6 +30,7 @@ export const accountsStore: AccountsModel = {
   }),
   editAccount: thunk((actions, _payload: Account) => {
     actions.setAccountEdit(_payload);
+    actions.toggleAccountModal();
   }),
   fetchAccounts: thunk(async (actions) => {
     const response = await fetchAccounts();
@@ -38,6 +39,7 @@ export const accountsStore: AccountsModel = {
     }
   }),
   openAddNewAccountModal: thunk((actions) => {
+    console.log("Opening add new account modal");
     actions.setAccountEdit(null);
     actions.toggleAccountModal();
   }),
