@@ -37,6 +37,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import ColorSelect from "../ui/colors/color-select";
+import FormModal from "../modal/form-modal";
 
 export default function AccountModal() {
   const accountEdit = useStoreState((state) => state.accounts.accountEdit);
@@ -109,75 +110,33 @@ export default function AccountModal() {
   }, [setColors, fetchColors, accountEdit]);
 
   return (
-    <div className="w-full p-6 flex justify-center">
-      <Dialog open={open} onOpenChange={() => toggleAccountModal()}>
-        <DialogContent className="sm:max-w-[425px]">
-          <FormProvider {...methods}>
-            <DevTool control={methods.control} />
-            <form onSubmit={methods.handleSubmit(handleSaveAccount)}>
-              <DialogHeader>
-                <DialogTitle>
-                  {accountEdit ? "Editar conta" : "Adicionar conta"}
-                </DialogTitle>
-                <DialogDescription>
-                  Crie uma nova conta preenchendo o formulário abaixo.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="description-form">Nome</Label>
-                  <Input
-                    id="description-form"
-                    {...methods.register("nome")}
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="value-form">Saldo inicial</Label>
-                  <NumberInput {...methods.register("saldo_inicial")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="account-form">Cor</Label>
-                  <ColorSelect />
-                </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button type="button" disabled={loading} variant="outline">
-                    Cancelar
-                  </Button>
-                </DialogClose>
-                {accountEdit && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline">Deletar</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Tem certeza que deseja excluir?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Esta ação não pode ser desfeita.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteAccount}>
-                          {loading ? <Spinner /> : "Deletar"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-                <Button type="submit" disabled={loading}>
-                  {loading ? <Spinner /> : "Salvar"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </FormProvider>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <FormModal
+      open={open}
+      toggleModal={toggleAccountModal}
+      dialogTitle={accountEdit ? "Editar conta" : "Adicionar conta"}
+      dialogDescription={
+        accountEdit
+          ? "Edite a conta preenchendo o formulário abaixo."
+          : "Crie uma nova conta preenchendo o formulário abaixo."
+      }
+      methods={methods}
+      onSubmit={handleSaveAccount}
+      onDelete={handleDeleteAccount}
+      loading={loading}
+      isEditForm={!!accountEdit}
+    >
+      <div className="grid gap-2">
+        <Label htmlFor="description-form">Nome</Label>
+        <Input id="description-form" {...methods.register("nome")} required />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="value-form">Saldo inicial</Label>
+        <NumberInput {...methods.register("saldo_inicial")} />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="account-form">Cor</Label>
+        <ColorSelect />
+      </div>
+    </FormModal>
   );
 }
