@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import BaseModal from "@/components/modal/base-modal";
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
@@ -40,6 +41,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { parseISO } from "date-fns";
 
 export default function TransactionModal() {
   const transactionEdit = useStoreState(
@@ -101,7 +103,9 @@ export default function TransactionModal() {
   useEffect(() => {
     if (transactionEdit) {
       methods.reset({
-        data_transacao: transactionEdit.data_transacao,
+        data_transacao: parseISO(transactionEdit.data_transacao)
+          .toISOString()
+          .split("T")[0],
         descricao: transactionEdit.descricao,
         valor: transactionEdit.valor,
         conta_id: String(transactionEdit.conta.id),
@@ -133,86 +137,82 @@ export default function TransactionModal() {
   }, [setAccounts, fetchCategories, transactionEdit]);
 
   return (
-    <div className="w-full p-6 flex justify-center">
-      <Dialog open={open} onOpenChange={() => toggleTransactionModal()}>
-        <DialogContent className="sm:max-w-[425px]">
-          <FormProvider {...methods}>
-            <DevTool control={methods.control} />
-            <form onSubmit={methods.handleSubmit(handleSaveTransaction)}>
-              <DialogHeader>
-                <DialogTitle>
-                  {transactionEdit ? "Editar transação" : "Adicionar transação"}
-                </DialogTitle>
-                <DialogDescription>
-                  Crie uma nova transação preenchendo o formulário abaixo.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <TypeRadioGroup name="despesa" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description-form">Data</Label>
-                  <DatePicker name="data_transacao" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="description-form">Descrição</Label>
-                  <Input
-                    id="description-form"
-                    {...methods.register("descricao")}
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="value-form">Valor</Label>
-                  <NumberInput {...methods.register("valor")} />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="account-form">Conta</Label>
-                  <AccountSelect />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="category-form">Categoria</Label>
-                  <CategorySelect />
-                </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button type="button" disabled={loading} variant="outline">
-                    Cancelar
-                  </Button>
-                </DialogClose>
-                {transactionEdit && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline">Deletar</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Tem certeza que deseja excluir?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Esta ação não pode ser desfeita.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteTransaction}>
-                          {loading ? <Spinner /> : "Deletar"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-                <Button type="submit" disabled={loading}>
-                  {loading ? <Spinner /> : "Salvar"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </FormProvider>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <BaseModal open={open} toggleModal={toggleTransactionModal}>
+      <FormProvider {...methods}>
+        <DevTool control={methods.control} />
+        <form onSubmit={methods.handleSubmit(handleSaveTransaction)}>
+          <DialogHeader>
+            <DialogTitle>
+              {transactionEdit ? "Editar transação" : "Adicionar transação"}
+            </DialogTitle>
+            <DialogDescription>
+              Crie uma nova transação preenchendo o formulário abaixo.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <TypeRadioGroup name="despesa" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description-form">Data</Label>
+              <DatePicker name="data_transacao" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description-form">Descrição</Label>
+              <Input
+                id="description-form"
+                {...methods.register("descricao")}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="value-form">Valor</Label>
+              <NumberInput {...methods.register("valor")} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="account-form">Conta</Label>
+              <AccountSelect />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="category-form">Categoria</Label>
+              <CategorySelect />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" disabled={loading} variant="outline">
+                Cancelar
+              </Button>
+            </DialogClose>
+            {transactionEdit && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline">Deletar</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Tem certeza que deseja excluir?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteTransaction}>
+                      {loading ? <Spinner /> : "Deletar"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+            <Button type="submit" disabled={loading}>
+              {loading ? <Spinner /> : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </FormProvider>
+    </BaseModal>
   );
 }

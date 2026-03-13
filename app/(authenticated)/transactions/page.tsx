@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
-import { ArrowDown, Circle, Minus, Plus } from "lucide-react";
+import { ArrowDown, Circle, Merge, Minus, Plus } from "lucide-react";
 import { useEffect } from "react";
 import { format, parse } from "date-fns";
 import {
@@ -76,22 +76,31 @@ export default function Transactions() {
                 <Plus />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-32">
+            <PopoverContent className="w-40">
               <div className="flex flex-col gap-2">
                 <Button
                   variant={"secondary"}
                   onClick={() => openAddNewTransactionModal()}
+                  className="w-full"
                 >
                   <Minus /> Despesa
                 </Button>
                 <Button
                   variant={"secondary"}
                   onClick={() => openAddNewTransactionModal()}
+                  className="w-full"
                 >
                   <Plus /> Receita
                 </Button>
+                <Button
+                  variant={"secondary"}
+                  onClick={() => openAddNewTransactionModal()}
+                  className="w-full"
+                >
+                  <Merge /> Transferência
+                </Button>
                 <Link href={"/transactions/import"}>
-                  <Button variant={"secondary"}>
+                  <Button variant={"secondary"} className="w-full">
                     <ArrowDown /> Importar
                   </Button>
                 </Link>
@@ -125,6 +134,10 @@ export default function Transactions() {
                 onClick={() => editTransaction(transaction)}
               >
                 <TableCell className="font-medium">
+                  <small>
+                    {format(new Date(transaction.data_transacao), "dd/MM")}
+                  </small>
+                  <br />
                   {transaction.descricao}
                   <br />
                   <div className="flex gap-2">
