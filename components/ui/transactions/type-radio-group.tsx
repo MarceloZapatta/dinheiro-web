@@ -4,6 +4,7 @@ import { RadioGroup, RadioGroupItem } from "../radio-group";
 
 interface TypeRadioGroupProps {
   name: string;
+  isTransferTransaction: boolean;
 }
 
 export default function TypeRadioGroup(props: Readonly<TypeRadioGroupProps>) {
@@ -17,11 +18,15 @@ export default function TypeRadioGroup(props: Readonly<TypeRadioGroupProps>) {
         <RadioGroup onValueChange={field.onChange} value={field.value}>
           <div className="flex items-center gap-3">
             <RadioGroupItem value="1" id="despesa" />
-            <Label htmlFor="despesa">Despesa</Label>
+            <Label htmlFor="despesa">
+              {props.isTransferTransaction ? "Saída" : "Despesa"}
+            </Label>
           </div>
           <div className="flex items-center gap-3">
             <RadioGroupItem value="0" id="receita" />
-            <Label htmlFor="receita">Receita</Label>
+            <Label htmlFor="receita">
+              {props.isTransferTransaction ? "Entrada" : "Receita"}
+            </Label>
           </div>
         </RadioGroup>
       )}

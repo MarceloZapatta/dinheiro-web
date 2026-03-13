@@ -4,6 +4,7 @@ export interface Transaction {
   descricao: string;
   valor: number;
   conta: Account;
+  conta_relacao: Account;
   categoria: Category;
   created_at: string;
   updated_at: string;

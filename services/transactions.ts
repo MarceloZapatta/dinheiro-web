@@ -17,6 +17,7 @@ export interface TransactionData extends DataFields {
   descricao: string;
   valor: number;
   conta_id: string;
+  conta_relacao_id: string;
   categoria_id: string;
   despesa: "1" | "0";
 }

@@ -22,29 +22,18 @@ import Link from "next/link";
 import { MonthFilter } from "@/components/ui/month-filter";
 
 export default function Transactions() {
-  const transactions = useStoreState(
-    (state) => state.transactions.transactions,
-  );
-  const transactionsStartPeriod = useStoreState(
-    (state) => state.transactions.transactionsStartPeriod,
-  );
-  const moveNextTransactionsPeriod = useStoreActions(
-    (actions) => actions.transactions.moveNextTransactionsPeriod,
-  );
-  const movePreviousTransactionsPeriod = useStoreActions(
-    (actions) => actions.transactions.movePreviousTransactionsPeriod,
-  );
-  const editTransaction = useStoreActions(
-    (actions) => actions.transactions.editTransaction,
+  const { transactions, transactionsStartPeriod } = useStoreState(
+    (state) => state.transactions,
   );
 
-  const fetchTransactions = useStoreActions(
-    (actions) => actions.transactions.fetchTransactions,
-  );
-
-  const openAddNewTransactionModal = useStoreActions(
-    (actions) => actions.transactions.openAddNewTransactionModal,
-  );
+  const {
+    moveNextTransactionsPeriod,
+    movePreviousTransactionsPeriod,
+    editTransaction,
+    fetchTransactions,
+    openAddNewTransactionModal,
+    toggleIsTransferTransaction,
+  } = useStoreActions((actions) => actions.transactions);
 
   const handleNextPeriod = () => {
     moveNextTransactionsPeriod();
@@ -64,6 +53,11 @@ export default function Transactions() {
       await fetchTransactions();
     })();
   }, [fetchTransactions]);
+
+  const handleClickTransferTransaction = () => {
+    toggleIsTransferTransaction();
+    openAddNewTransactionModal();
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -94,7 +88,7 @@ export default function Transactions() {
                 </Button>
                 <Button
                   variant={"secondary"}
-                  onClick={() => openAddNewTransactionModal()}
+                  onClick={() => handleClickTransferTransaction()}
                   className="w-full"
                 >
                   <Merge /> Transferência

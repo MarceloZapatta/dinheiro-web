@@ -20,10 +20,11 @@ import TypeRadioGroup from "../ui/transactions/type-radio-group";
 import { parseISO } from "date-fns";
 import FormModal from "@/components/modal/form-modal";
 
-export default function TransactionModal() {
+export default function TransferTransactionModal() {
   const transactionEdit = useStoreState(
     (state) => state.transactions.transactionEdit,
   );
+
   const methods = useForm<TransactionData>({
     defaultValues: {
       data_transacao: new Date().toISOString().split("T")[0],
@@ -35,20 +36,20 @@ export default function TransactionModal() {
       despesa: "1",
     },
   });
-
-  const { transactionModalOpen: open, isTransferTransaction } = useStoreState(
-    (state) => state.transactions,
+  const open = useStoreState(
+    (state) => state.transactions.transactionModalOpen,
   );
-
-  const { toggleTransactionModal, fetchTransactions } = useStoreActions(
-    (actions) => actions.transactions,
+  const toggleTransferTransactionModal = useStoreActions(
+    (actions) => actions.transactions.toggleTransferTransactionModal,
   );
-
   const setAccounts = useStoreActions(
     (actions) => actions.accounts.setAccounts,
   );
   const fetchCategories = useStoreActions(
     (actions) => actions.categories.fetchCategories,
+  );
+  const fetchTransactions = useStoreActions(
+    (actions) => actions.transactions.fetchTransactions,
   );
 
   const [loading, setLoading] = useState(false);
@@ -63,7 +64,7 @@ export default function TransactionModal() {
     }
 
     fetchTransactions();
-    toggleTransactionModal();
+    toggleTransferTransactionModal();
     setLoading(false);
   };
 
@@ -73,7 +74,7 @@ export default function TransactionModal() {
     setLoading(true);
     await deleteTransaction(transactionEdit.id);
     fetchTransactions();
-    toggleTransactionModal();
+    toggleTransferTransactionModal();
     setLoading(false);
   };
 
@@ -115,29 +116,18 @@ export default function TransactionModal() {
     fetchCategories();
   }, [setAccounts, fetchCategories, transactionEdit]);
 
-  function dialogTitle(): string {
-    const actionString = transactionEdit ? "Editar" : "Adicionar";
-
-    return isTransferTransaction
-      ? `${actionString} transferência`
-      : `${actionString} transação`;
-  }
-
-  function dialogDescription(): string {
-    const actionString = transactionEdit ? "Edite" : "Adicione";
-    const transactionTypeString = isTransferTransaction
-      ? "transferência"
-      : "transação";
-
-    return `${actionString} a ${transactionTypeString} preenchendo o formulário abaixo.`;
-  }
-
   return (
     <FormModal
       open={open}
-      toggleModal={toggleTransactionModal}
-      dialogTitle={dialogTitle()}
-      dialogDescription={dialogDescription()}
+      toggleModal={toggleTransferTransactionModal}
+      dialogTitle={
+        transactionEdit ? "Editar transferência" : "Adicionar transferência"
+      }
+      dialogDescription={
+        transactionEdit
+          ? "Edite a transferência preenchendo o formulário abaixo."
+          : "Crie uma nova transferência preenchendo o formulário abaixo."
+      }
       methods={methods}
       onSubmit={handleSaveTransaction}
       onDelete={handleDeleteTransaction}
@@ -145,10 +135,7 @@ export default function TransactionModal() {
       isEditForm={!!transactionEdit}
     >
       <div className="grid gap-2">
-        <TypeRadioGroup
-          name="despesa"
-          isTransferTransaction={isTransferTransaction}
-        />
+        <TypeRadioGroup name="despesa" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="description-form">Data</Label>
@@ -167,18 +154,16 @@ export default function TransactionModal() {
         <NumberInput {...methods.register("valor")} />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="account-form">Conta</Label>
-        <AccountSelect />
+        <Label htmlFor="account-form">Conta de origem</Label>
+        <AccountSelect name="conta_id" />
       </div>
-      {isTransferTransaction && (
-        <div className="grid gap-2">
-          <Label htmlFor="account-form">Conta de destino</Label>
-          <AccountSelect
-            name="conta_relacao_id"
-            disabled={!!methods.getValues("conta_id")}
-          />
-        </div>
-      )}
+      <div className="grid gap-2">
+        <Label htmlFor="account-form">Conta de destino</Label>
+        <AccountSelect
+          name="conta_relacao_id"
+          disabled={!!methods.getValues("conta_id")}
+        />
+      </div>
       <div className="grid gap-2">
         <Label htmlFor="category-form">Categoria</Label>
         <CategorySelect />

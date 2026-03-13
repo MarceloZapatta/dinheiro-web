@@ -21,6 +21,8 @@ export interface TransactionsModel {
   transactionModalOpen: boolean;
   toggleTransactionModal: Action<TransactionsModel, void>;
   openAddNewTransactionModal: Thunk<TransactionsModel, void>;
+  isTransferTransaction: boolean;
+  toggleIsTransferTransaction: Action<TransactionsModel, void>;
   transactions: Transaction[];
   setTransactions: Action<TransactionsModel, Transaction[]>;
   transactionEdit: Transaction | null;
@@ -62,6 +64,10 @@ export const transactionsStore: TransactionsModel = {
   openAddNewTransactionModal: thunk((actions) => {
     actions.setTransactionEdit(null);
     actions.toggleTransactionModal();
+  }),
+  isTransferTransaction: false,
+  toggleIsTransferTransaction: action((state) => {
+    state.isTransferTransaction = !state.isTransferTransaction;
   }),
   transactions: [],
   setTransactions: action((state, payload) => {
