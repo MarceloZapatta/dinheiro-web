@@ -42,6 +42,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { parseISO } from "date-fns";
+import FormModal from "@/components/modal/form-modal";
 
 export default function TransactionModal() {
   const transactionEdit = useStoreState(
@@ -137,82 +138,48 @@ export default function TransactionModal() {
   }, [setAccounts, fetchCategories, transactionEdit]);
 
   return (
-    <BaseModal open={open} toggleModal={toggleTransactionModal}>
-      <FormProvider {...methods}>
-        <DevTool control={methods.control} />
-        <form onSubmit={methods.handleSubmit(handleSaveTransaction)}>
-          <DialogHeader>
-            <DialogTitle>
-              {transactionEdit ? "Editar transação" : "Adicionar transação"}
-            </DialogTitle>
-            <DialogDescription>
-              Crie uma nova transação preenchendo o formulário abaixo.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <TypeRadioGroup name="despesa" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description-form">Data</Label>
-              <DatePicker name="data_transacao" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description-form">Descrição</Label>
-              <Input
-                id="description-form"
-                {...methods.register("descricao")}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="value-form">Valor</Label>
-              <NumberInput {...methods.register("valor")} />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="account-form">Conta</Label>
-              <AccountSelect />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="category-form">Categoria</Label>
-              <CategorySelect />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" disabled={loading} variant="outline">
-                Cancelar
-              </Button>
-            </DialogClose>
-            {transactionEdit && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline">Deletar</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Tem certeza que deseja excluir?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não pode ser desfeita.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteTransaction}>
-                      {loading ? <Spinner /> : "Deletar"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-            <Button type="submit" disabled={loading}>
-              {loading ? <Spinner /> : "Salvar"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </FormProvider>
-    </BaseModal>
+    <FormModal
+      open={open}
+      toggleModal={toggleTransactionModal}
+      dialogTitle={transactionEdit ? "Editar transação" : "Adicionar transação"}
+      dialogDescription={
+        transactionEdit
+          ? "Edite a transação preenchendo o formulário abaixo."
+          : "Crie uma nova transação preenchendo o formulário abaixo."
+      }
+      methods={methods}
+      onSubmit={handleSaveTransaction}
+      onDelete={handleDeleteTransaction}
+      loading={loading}
+      isEditForm={!!transactionEdit}
+    >
+      <div className="grid gap-2">
+        <TypeRadioGroup name="despesa" />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="description-form">Data</Label>
+        <DatePicker name="data_transacao" />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="description-form">Descrição</Label>
+        <Input
+          id="description-form"
+          {...methods.register("descricao")}
+          required
+        />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="value-form">Valor</Label>
+        <NumberInput {...methods.register("valor")} />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="account-form">Conta</Label>
+        <AccountSelect />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="category-form">Categoria</Label>
+        <CategorySelect />
+      </div>
+    </FormModal>
   );
 }

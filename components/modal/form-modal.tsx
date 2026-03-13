@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -10,7 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import BaseModal from "@/components/modal/base-modal";
 import { Spinner } from "@/components/ui/spinner";
-import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
+import {
+  FieldValues,
+  FormProvider,
+  useFormContext,
+  UseFormReturn,
+} from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import {
   AlertDialog,
@@ -29,12 +32,12 @@ interface FormModalProps {
   readonly dialogDescription: string;
   toggleModal: () => void;
   readonly open: boolean;
-  methods: UseFormReturn<FieldValues, any, FieldValues>;
-  handleSave: (data: FieldValues) => Promise<void>;
-  handleDelete: () => Promise<void>;
-  formFields: React.ReactNode;
+  methods: UseFormReturn<any, any, any>;
+  onSubmit: (data: any) => Promise<void>;
+  onDelete: () => Promise<void>;
   loading: boolean;
   isEditForm: boolean;
+  children: React.ReactNode;
 }
 
 export default function FormModal({
@@ -43,22 +46,22 @@ export default function FormModal({
   dialogTitle,
   dialogDescription,
   methods,
-  handleSave,
-  handleDelete,
-  formFields,
+  onSubmit,
+  onDelete,
   loading,
   isEditForm,
+  children,
 }: Readonly<FormModalProps>) {
   return (
     <BaseModal open={open} toggleModal={toggleModal}>
       <FormProvider {...methods}>
         <DevTool control={methods.control} />
-        <form onSubmit={methods.handleSubmit(handleSave)}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>{dialogTitle}</DialogTitle>
             <DialogDescription>{dialogDescription}</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">{formFields}</div>
+          <div className="grid gap-4 py-4">{children}</div>
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" disabled={loading} variant="outline">
@@ -81,7 +84,7 @@ export default function FormModal({
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>
+                    <AlertDialogAction onClick={onDelete}>
                       {loading ? <Spinner /> : "Deletar"}
                     </AlertDialogAction>
                   </AlertDialogFooter>
