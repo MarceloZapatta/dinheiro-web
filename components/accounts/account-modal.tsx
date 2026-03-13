@@ -1,21 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/spinner";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import NumberInput from "@/components/ui/number-input";
 import {
   AccountData,
@@ -24,18 +13,6 @@ import {
   storeAccount,
   updateAccount,
 } from "@/services/accounts";
-import { DevTool } from "@hookform/devtools";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
 import ColorSelect from "../ui/colors/color-select";
 import FormModal from "../modal/form-modal";
 
