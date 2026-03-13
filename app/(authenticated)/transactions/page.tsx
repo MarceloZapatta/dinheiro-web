@@ -10,7 +10,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
-import { ArrowDown, Circle, Merge, Minus, Plus } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeftRight,
+  ArrowRight,
+  Circle,
+  Merge,
+  Minus,
+  Plus,
+  TrendingUpDown,
+} from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { format, parse } from "date-fns";
 import {
@@ -100,7 +109,7 @@ export default function Transactions() {
                   onClick={() => handleClickTransferTransaction()}
                   className="w-full"
                 >
-                  <Merge /> Transferência
+                  <ArrowLeftRight /> Transferência
                 </Button>
                 <Link href={"/transactions/import"}>
                   <Button variant={"secondary"} className="w-full">
@@ -152,6 +161,20 @@ export default function Transactions() {
                       />
                       {transaction.conta.nome}
                     </span>
+                    {transaction.movimentacao_relacao && (
+                      <span className="flex">
+                        <ArrowRight size={18} className="mr-2" />
+                        <Circle
+                          color={
+                            transaction.movimentacao_relacao.conta.cor
+                              .hexadecimal
+                          }
+                          size={14}
+                          className="mr-2 mt-1"
+                        />
+                        {transaction.movimentacao_relacao.conta.nome}
+                      </span>
+                    )}
                     <span className="flex">
                       <Circle
                         color={transaction.categoria.cor.hexadecimal}

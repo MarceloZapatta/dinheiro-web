@@ -15,7 +15,11 @@ export default function TypeRadioGroup(props: Readonly<TypeRadioGroupProps>) {
       name={props.name}
       control={control}
       render={({ field }) => (
-        <RadioGroup onValueChange={field.onChange} value={field.value}>
+        <RadioGroup
+          onValueChange={field.onChange}
+          value={field.value}
+          disabled={props.isTransferTransaction}
+        >
           <div className="flex items-center gap-3">
             <RadioGroupItem value="1" id="despesa" />
             <Label htmlFor="despesa">
