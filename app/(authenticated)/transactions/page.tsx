@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import { ArrowDown, Circle, Merge, Minus, Plus } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { format, parse } from "date-fns";
 import {
   Popover,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import Link from "next/link";
 import { MonthFilter } from "@/components/ui/month-filter";
+import { Transaction } from "@/types/transaction";
 
 export default function Transactions() {
   const { transactions, transactionsStartPeriod } = useStoreState(
@@ -32,7 +33,6 @@ export default function Transactions() {
     editTransaction,
     fetchTransactions,
     openAddNewTransactionModal,
-    toggleIsTransferTransaction,
   } = useStoreActions((actions) => actions.transactions);
 
   const handleNextPeriod = () => {
@@ -55,8 +55,17 @@ export default function Transactions() {
   }, [fetchTransactions]);
 
   const handleClickTransferTransaction = () => {
-    toggleIsTransferTransaction();
-    openAddNewTransactionModal();
+    const isTransfer = true;
+    openAddNewTransactionModal(isTransfer);
+  };
+
+  const mapCategoryName = (transaction: Transaction) => {
+    if (transaction.categoria.nome === "Transferência") {
+      return transaction.valor < 0
+        ? "Transferência (Saída)"
+        : "Transferência (Entrada)";
+    }
+    return transaction.categoria.nome;
   };
 
   return (
@@ -149,7 +158,7 @@ export default function Transactions() {
                         size={14}
                         className="mr-2 mt-1"
                       />
-                      {transaction.categoria.nome}
+                      {mapCategoryName(transaction)}
                     </span>
                   </div>
                 </TableCell>

@@ -13,7 +13,7 @@ export async function fetchApi(
   method: "GET" | "POST" | "PUT" | "DELETE",
   endpoint: string,
   data?: DataFields,
-  useFormData: boolean = false
+  useFormData: boolean = false,
 ): Promise<Response> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!apiUrl) {
@@ -25,7 +25,7 @@ export async function fetchApi(
   if (useFormData) {
     if (data) {
       Object.keys(data).forEach((key) =>
-        formData.append(key, data[key] as string | Blob)
+        formData.append(key, data[key] as string | Blob),
       );
     }
   }
@@ -38,7 +38,7 @@ export async function fetchApi(
 
   if (method === "GET" && data) {
     queryParams = `?${new URLSearchParams(
-      data as Record<string, string>
+      data as Record<string, string>,
     ).toString()}`;
   }
 
@@ -56,28 +56,28 @@ export async function fetchApi(
   return fetch(`${apiUrl}/${endpoint}${queryParams}`, {
     method,
     headers: headers,
-    body: method === "POST" ? body : undefined,
+    body: method === "POST" || method === "PUT" ? body : undefined,
   });
 }
 
 export async function postApi(
   endpoint: string,
   data?: DataFields,
-  useFormData: boolean = false
+  useFormData: boolean = false,
 ): Promise<Response> {
   return fetchApi("POST", endpoint, data, useFormData);
 }
 
 export async function getApi(
   endpoint: string,
-  data?: DataFields
+  data?: DataFields,
 ): Promise<Response> {
   return fetchApi("GET", endpoint, data);
 }
 
 export async function putApi(
   endpoint: string,
-  data?: DataFields
+  data?: DataFields,
 ): Promise<Response> {
   return fetchApi("PUT", endpoint, data);
 }

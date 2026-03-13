@@ -86,7 +86,9 @@ export default function TransactionModal() {
         descricao: transactionEdit.descricao,
         valor: transactionEdit.valor,
         conta_id: String(transactionEdit.conta.id),
-        conta_relacao_id: String(transactionEdit.conta_relacao.id),
+        conta_relacao_id: transactionEdit.movimentacao_relacao
+          ? String(transactionEdit.movimentacao_relacao.conta.id)
+          : "",
         categoria_id: String(transactionEdit.categoria.id),
         despesa: transactionEdit.valor < 1 ? "1" : "0",
       });
@@ -173,16 +175,15 @@ export default function TransactionModal() {
       {isTransferTransaction && (
         <div className="grid gap-2">
           <Label htmlFor="account-form">Conta de destino</Label>
-          <AccountSelect
-            name="conta_relacao_id"
-            disabled={!!methods.getValues("conta_id")}
-          />
+          <AccountSelect name="conta_relacao_id" />
         </div>
       )}
-      <div className="grid gap-2">
-        <Label htmlFor="category-form">Categoria</Label>
-        <CategorySelect />
-      </div>
+      {!isTransferTransaction && (
+        <div className="grid gap-2">
+          <Label htmlFor="category-form">Categoria</Label>
+          <CategorySelect />
+        </div>
+      )}
     </FormModal>
   );
 }

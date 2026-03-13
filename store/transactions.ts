@@ -20,9 +20,13 @@ import {
 export interface TransactionsModel {
   transactionModalOpen: boolean;
   toggleTransactionModal: Action<TransactionsModel, void>;
-  openAddNewTransactionModal: Thunk<TransactionsModel, void>;
+  openAddNewTransactionModal: Thunk<
+    TransactionsModel,
+    boolean | undefined,
+    void
+  >;
   isTransferTransaction: boolean;
-  toggleIsTransferTransaction: Action<TransactionsModel, void>;
+  setIsTransferTransaction: Action<TransactionsModel, boolean>;
   transactions: Transaction[];
   setTransactions: Action<TransactionsModel, Transaction[]>;
   transactionEdit: Transaction | null;
@@ -61,13 +65,14 @@ export const transactionsStore: TransactionsModel = {
   toggleTransactionModal: action((state) => {
     state.transactionModalOpen = !state.transactionModalOpen;
   }),
-  openAddNewTransactionModal: thunk((actions) => {
+  openAddNewTransactionModal: thunk((actions, isTransfer = false) => {
     actions.setTransactionEdit(null);
     actions.toggleTransactionModal();
+    actions.setIsTransferTransaction(isTransfer);
   }),
   isTransferTransaction: false,
-  toggleIsTransferTransaction: action((state) => {
-    state.isTransferTransaction = !state.isTransferTransaction;
+  setIsTransferTransaction: action((state, payload) => {
+    state.isTransferTransaction = payload;
   }),
   transactions: [],
   setTransactions: action((state, payload) => {
