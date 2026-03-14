@@ -1,6 +1,6 @@
 import { Label } from "../label";
 import { Controller, useFormContext } from "react-hook-form";
-import { RadioGroup, RadioGroupItem } from "../radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface TypeRadioGroupProps {
   name: string;

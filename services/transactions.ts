@@ -95,7 +95,7 @@ export async function deleteTransaction(id: number) {
 
 export async function importTransactionsFile(
   file: File,
-  type: "ofx" = "ofx",
+  type: "ofx" | "image" = "ofx",
 ): Promise<ApiResponse<ImportTransactionsResponse>> {
   console.log(file);
 
