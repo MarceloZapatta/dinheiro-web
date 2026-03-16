@@ -30,6 +30,12 @@ export function Menu() {
         >
           Contas
         </Link>
+        <Link
+          href="/credit-cards"
+          className="text-gray-700 hover:text-blue-600 font-medium"
+        >
+          Cartões de crédito
+        </Link>
       </div>
     </nav>
   );

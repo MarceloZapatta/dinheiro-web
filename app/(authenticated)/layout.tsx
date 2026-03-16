@@ -6,6 +6,7 @@ import { StoreProvider } from "easy-peasy";
 import store from "@/store/store";
 import TransactionModal from "@/components/transactions/transaction-modal";
 import AccountModal from "@/components/accounts/account-modal";
+import CreditCardModal from "@/components/credit-cards/credit-card-modal";
 import { Menu } from "@/components/ui/menu";
 
 const geistSans = Geist({
@@ -27,6 +28,7 @@ export default function RootLayout({
     <>
       <TransactionModal />
       <AccountModal />
+      <CreditCardModal />
       <Menu />
       {children}
     </>
