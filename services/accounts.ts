@@ -1,6 +1,5 @@
 import { Account } from "@/types/account";
-import { retrieveToken } from "./auth";
-import { DataFields, postApi, putApi } from "./api";
+import { DataFields, deleteApi, getApi, postApi, putApi } from "./api";
 
 export interface AccountData extends DataFields {
   nome: string;
@@ -13,20 +12,7 @@ interface AccountResponse {
 }
 
 export async function fetchAccounts(): Promise<AccountResponse | undefined> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) {
-    console.error("API URL is not defined");
-    return;
-  }
-
-  const res = await fetch(`${apiUrl}/contas`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${await retrieveToken()}`,
-    },
-  });
+  const res = await getApi("contas");
 
   if (!res.ok) {
     console.error("Fetching accounts failed");
@@ -61,20 +47,7 @@ export async function updateAccount(id: number, data: AccountData) {
 }
 
 export async function deleteAccount(id: number) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) {
-    console.error("API URL is not defined");
-    return;
-  }
-
-  const res = await fetch(`${apiUrl}/contas/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${await retrieveToken()}`,
-    },
-  });
+  const res = await deleteApi(`contas/${id}`);
 
   if (!res.ok) {
     console.error("Deleting account failed");

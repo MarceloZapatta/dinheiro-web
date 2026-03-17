@@ -82,6 +82,13 @@ export async function putApi(
   return fetchApi("PUT", endpoint, data);
 }
 
+export async function deleteApi(
+  endpoint: string,
+  data?: DataFields,
+): Promise<Response> {
+  return fetchApi("DELETE", endpoint, data);
+}
+
 function getCookie(name: string): string | undefined {
   return document.cookie
     .split("; ")

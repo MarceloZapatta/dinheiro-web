@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import { Circle, Plus } from "lucide-react";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function CreditCards() {
@@ -44,6 +45,7 @@ export default function CreditCards() {
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
+              <TableHead>Faturas</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -70,6 +72,14 @@ export default function CreditCards() {
                       {creditCard.nome}
                     </span>
                   </div>
+                </TableCell>
+                <TableCell
+                  className="font-medium"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Link href={`/credit-cards/${creditCard.id}/invoices`}>
+                    <Button>Visualizar faturas</Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

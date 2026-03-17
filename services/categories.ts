@@ -1,4 +1,4 @@
-import { retrieveToken } from "./auth";
+import { getApi } from "./api";
 import { Category } from "@/types/category";
 
 interface CategoryResponse {
@@ -9,20 +9,7 @@ interface CategoryResponse {
 }
 
 export async function fetchCategories(): Promise<CategoryResponse | undefined> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) {
-    console.error("API URL is not defined");
-    return;
-  }
-
-  const res = await fetch(`${apiUrl}/categorias`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${await retrieveToken()}`,
-    },
-  });
+  const res = await getApi("categorias");
 
   if (!res.ok) {
     console.error("Fetching categories failed");

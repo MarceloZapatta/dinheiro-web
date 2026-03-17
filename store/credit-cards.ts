@@ -1,5 +1,5 @@
-import { fetchCreditCards } from "@/services/credit-cards";
-import { CreditCard } from "@/types/credit-card";
+import { fetchCreditCards, fetchInvoices } from "@/services/credit-cards";
+import { CreditCard, CreditCardInvoice } from "@/types/credit-card";
 import { action, Action, Thunk, thunk } from "easy-peasy";
 import { StoreModel } from "./store";
 
@@ -13,6 +13,11 @@ export interface CreditCardsModel {
   editCreditCard: Thunk<CreditCardsModel, CreditCard>;
   fetchCreditCards: Thunk<CreditCardsModel>;
   openAddNewCreditCardModal: Thunk<CreditCardsModel, void, unknown, StoreModel>;
+  invoices: CreditCardInvoice[];
+  setInvoices: Action<CreditCardsModel, CreditCardInvoice[]>;
+  fetchInvoices: Thunk<CreditCardsModel, number>;
+  currentInvoice: CreditCardInvoice | null;
+  setCurrentInvoice: Action<CreditCardsModel, CreditCardInvoice | null>;
 }
 
 export const creditCardsStore: CreditCardsModel = {
@@ -43,5 +48,19 @@ export const creditCardsStore: CreditCardsModel = {
     console.log("Opening add new credit card modal");
     actions.setCreditCardEdit(null);
     actions.toggleCreditCardModal();
+  }),
+  invoices: [],
+  setInvoices: action((state, payload) => {
+    state.invoices = payload;
+  }),
+  fetchInvoices: thunk(async (actions, creditCardId) => {
+    const response = await fetchInvoices(creditCardId);
+    if (response?.data) {
+      actions.setInvoices(response.data);
+    }
+  }),
+  currentInvoice: null,
+  setCurrentInvoice: action((state, payload) => {
+    state.currentInvoice = payload;
   }),
 };
