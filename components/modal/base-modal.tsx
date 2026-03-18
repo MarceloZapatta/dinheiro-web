@@ -12,6 +12,8 @@ export default function BaseModal({
   toggleModal,
   children,
 }: Readonly<BaseModalProps>): React.ReactNode {
+  if (!open) return null;
+
   return (
     <div className="w-full p-6 flex justify-center">
       <Dialog open={open} onOpenChange={() => toggleModal()}>

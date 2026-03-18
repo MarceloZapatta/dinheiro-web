@@ -15,12 +15,10 @@ import {
   ArrowLeftRight,
   ArrowRight,
   Circle,
-  Merge,
   Minus,
   Plus,
-  TrendingUpDown,
 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { format, parse } from "date-fns";
 import {
   Popover,
@@ -30,6 +28,7 @@ import {
 import Link from "next/link";
 import { MonthFilter } from "@/components/ui/month-filter";
 import { Transaction } from "@/types/transaction";
+import { Badge } from "@/components/ui/badge";
 
 export default function Transactions() {
   const { transactions, transactionsStartPeriod } = useStoreState(
@@ -160,6 +159,17 @@ export default function Transactions() {
                         className="mr-2 mt-1"
                       />
                       {transaction.conta.nome}
+                      {transaction.credit_card_invoice && (
+                        <Badge className="mx-2">
+                          Fatura:{" "}
+                          {format(
+                            new Date(
+                              transaction.credit_card_invoice.reference_date,
+                            ),
+                            "MM/yyyy",
+                          )}
+                        </Badge>
+                      )}
                     </span>
                     {transaction.movimentacao_relacao && (
                       <span className="flex">

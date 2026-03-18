@@ -19,11 +19,16 @@ import DatePicker from "../ui/date-picker";
 import TypeRadioGroup from "../ui/transactions/type-radio-group";
 import { parseISO } from "date-fns";
 import FormModal from "@/components/modal/form-modal";
+import AccountTypeRadioGroup from "../ui/transactions/account-type-radio-group";
+import { TransactionType } from "@/types/transaction";
+import CreditCardSelect from "../ui/credit-cards/credit-card-select";
+import InvoiceSelect from "../ui/credit-cards/invoice-select";
 
 export default function TransactionModal() {
   const transactionEdit = useStoreState(
     (state) => state.transactions.transactionEdit,
   );
+
   const methods = useForm<TransactionData>({
     defaultValues: {
       data_transacao: new Date().toISOString().split("T")[0],
@@ -33,6 +38,8 @@ export default function TransactionModal() {
       conta_relacao_id: "",
       categoria_id: "",
       despesa: "1",
+      credit_card_invoice_id: "",
+      transaction_type: TransactionType.BANK,
     },
   });
 
@@ -44,11 +51,14 @@ export default function TransactionModal() {
     (actions) => actions.transactions,
   );
 
-  const setAccounts = useStoreActions(
-    (actions) => actions.accounts.setAccounts,
+  const fetchAccounts = useStoreActions(
+    (actions) => actions.accounts.fetchAccounts,
   );
   const fetchCategories = useStoreActions(
     (actions) => actions.categories.fetchCategories,
+  );
+  const { fetchCreditCards, fetchInvoices } = useStoreActions(
+    (actions) => actions.creditCards,
   );
 
   const [loading, setLoading] = useState(false);
@@ -80,6 +90,9 @@ export default function TransactionModal() {
   useEffect(() => {
     if (transactionEdit) {
       methods.reset({
+        transaction_type: transactionEdit.credit_card_invoice?.id
+          ? TransactionType.CREDIT_CARD
+          : TransactionType.BANK,
         data_transacao: parseISO(transactionEdit.data_transacao)
           .toISOString()
           .split("T")[0],
@@ -90,6 +103,9 @@ export default function TransactionModal() {
           ? String(transactionEdit.movimentacao_relacao.conta.id)
           : "",
         categoria_id: String(transactionEdit.categoria.id),
+        credit_card_invoice_id: transactionEdit.credit_card_invoice?.id
+          ? String(transactionEdit.credit_card_invoice.id)
+          : "",
         despesa: transactionEdit.valor < 1 ? "1" : "0",
       });
     } else {
@@ -101,21 +117,36 @@ export default function TransactionModal() {
         conta_relacao_id: "",
         categoria_id: "",
         despesa: "1",
+        transaction_type: TransactionType.BANK,
+        credit_card_invoice_id: "",
       });
     }
   }, [methods, open, transactionEdit]);
 
-  useEffect(() => {
-    async function loadAccounts() {
-      const response = await fetchAccounts();
-      if (response) {
-        setAccounts(response.data);
-      }
-    }
-    loadAccounts();
+  const isCreditCardTransaction =
+    methods.watch("transaction_type") === TransactionType.CREDIT_CARD;
 
+  const accountId = methods.watch("conta_id");
+
+  useEffect(() => {
+    fetchAccounts();
     fetchCategories();
-  }, [setAccounts, fetchCategories, transactionEdit]);
+    if (isCreditCardTransaction) {
+      fetchCreditCards();
+    }
+  }, [
+    fetchAccounts,
+    fetchCategories,
+    fetchCreditCards,
+    isCreditCardTransaction,
+    transactionEdit,
+  ]);
+
+  useEffect(() => {
+    if (isCreditCardTransaction) {
+      fetchInvoices(Number(accountId));
+    }
+  }, [accountId, fetchInvoices, isCreditCardTransaction]);
 
   function dialogTitle(): string {
     const actionString = transactionEdit ? "Editar" : "Adicionar";
@@ -147,10 +178,30 @@ export default function TransactionModal() {
       isEditForm={!!transactionEdit}
     >
       <div className="grid gap-2">
-        <TypeRadioGroup
-          name="despesa"
-          isTransferTransaction={isTransferTransaction}
-        />
+        <Label htmlFor="transaction_type">Tipo de transação</Label>
+        <AccountTypeRadioGroup name="transaction_type" />
+      </div>
+      {!isCreditCardTransaction && (
+        <div className="grid gap-2">
+          <Label htmlFor="account-form">Conta</Label>
+          <AccountSelect />
+        </div>
+      )}
+      {isCreditCardTransaction && (
+        <>
+          <div className="grid gap-2">
+            <Label htmlFor="account-form">Cartão de Crédito</Label>
+            <CreditCardSelect />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="account-form">Fatura</Label>
+            <InvoiceSelect />
+          </div>
+        </>
+      )}
+      <div className="grid gap-2">
+        <Label htmlFor="despesa">Tipo</Label>
+        <TypeRadioGroup name="despesa" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="description-form">Data</Label>
@@ -167,10 +218,6 @@ export default function TransactionModal() {
       <div className="grid gap-2">
         <Label htmlFor="value-form">Valor</Label>
         <NumberInput {...methods.register("valor")} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="account-form">Conta</Label>
-        <AccountSelect />
       </div>
       {isTransferTransaction && (
         <div className="grid gap-2">

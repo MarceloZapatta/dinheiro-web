@@ -19,6 +19,7 @@ export interface CreditCardInvoice {
   id: number;
   conta_id: number;
   reference_date: string;
+  closing_date: string;
   total_amount: number;
   is_paid: boolean;
   transactions: Transaction[];

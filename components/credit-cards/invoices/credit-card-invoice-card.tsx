@@ -34,7 +34,7 @@ export function CreditCardInvoiceCard({ invoice }: CreditCardInvoiceCardProps) {
         <CardTitle className="flex justify-between">
           {format(new Date(invoice.reference_date), "MM/yyyy")}{" "}
           {currentInvoice?.id === Number(invoice.id) && (
-            <Badge>Selecionada</Badge>
+            <Badge variant="secondary">Visualizando</Badge>
           )}
         </CardTitle>
       </CardHeader>
