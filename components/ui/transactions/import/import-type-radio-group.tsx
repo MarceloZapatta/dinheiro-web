@@ -25,6 +25,10 @@ export default function ImportTypeRadioGroup(
             <RadioGroupItem value="image" id="image" />
             <Label htmlFor="image">Imagem</Label>
           </div>
+          <div className="flex items-center gap-3">
+            <RadioGroupItem value="excel" id="excel" />
+            <Label htmlFor="excel">Excel</Label>
+          </div>
         </RadioGroup>
       )}
     />

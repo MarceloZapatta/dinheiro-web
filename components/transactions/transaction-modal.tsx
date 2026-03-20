@@ -4,9 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStoreActions, useStoreState } from "@/store/hooks";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import NumberInput from "@/components/ui/number-input";
-import { fetchAccounts } from "@/services/accounts";
 import AccountSelect from "../ui/accounts/account-select";
 import CategorySelect from "../ui/categories/categories-select";
 import {
@@ -124,9 +123,10 @@ export default function TransactionModal() {
   }, [methods, open, transactionEdit]);
 
   const isCreditCardTransaction =
-    methods.watch("transaction_type") === TransactionType.CREDIT_CARD;
+    useWatch({ name: "transaction_type", control: methods.control }) ===
+    TransactionType.CREDIT_CARD;
 
-  const accountId = methods.watch("conta_id");
+  const accountId = useWatch({ name: "conta_id", control: methods.control });
 
   useEffect(() => {
     fetchAccounts();

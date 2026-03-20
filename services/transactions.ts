@@ -7,6 +7,7 @@ import {
   postApi,
   putApi,
 } from "@/services/api";
+import { AccountType } from "@/types/account";
 
 interface CheckImportTransactionsResponse {
   movimentacoes: Transaction[];
@@ -96,6 +97,9 @@ export async function deleteTransaction(id: number) {
 export async function importTransactionsFile(
   file: File,
   type: "ofx" | "image" = "ofx",
+  accountType: AccountType,
+  contaId: string,
+  creditCardInvoiceId?: string,
 ): Promise<ApiResponse<ImportTransactionsResponse>> {
   console.log(file);
 
@@ -103,6 +107,9 @@ export async function importTransactionsFile(
     `transactions/import/${type}`,
     {
       file: file,
+      account_type: accountType,
+      conta_id: contaId,
+      credit_card_invoice_id: creditCardInvoiceId,
     },
     true,
   );
