@@ -39,8 +39,8 @@ export default function TransferTransactionModal() {
   const open = useStoreState(
     (state) => state.transactions.transactionModalOpen,
   );
-  const toggleTransferTransactionModal = useStoreActions(
-    (actions) => actions.transactions.toggleTransferTransactionModal,
+  const toggleTransactionModal = useStoreActions(
+    (actions) => actions.transactions.toggleTransactionModal,
   );
   const setAccounts = useStoreActions(
     (actions) => actions.accounts.setAccounts,
@@ -64,7 +64,7 @@ export default function TransferTransactionModal() {
     }
 
     fetchTransactions();
-    toggleTransferTransactionModal();
+    toggleTransactionModal(false);
     setLoading(false);
   };
 
@@ -74,7 +74,7 @@ export default function TransferTransactionModal() {
     setLoading(true);
     await deleteTransaction(transactionEdit.id);
     fetchTransactions();
-    toggleTransferTransactionModal();
+    toggleTransactionModal(false);
     setLoading(false);
   };
 
@@ -87,7 +87,9 @@ export default function TransferTransactionModal() {
         descricao: transactionEdit.descricao,
         valor: transactionEdit.valor,
         conta_id: String(transactionEdit.conta.id),
-        conta_relacao_id: String(transactionEdit.conta_relacao.id),
+        conta_relacao_id: String(
+          transactionEdit.movimentacao_relacao?.conta.id,
+        ),
         categoria_id: String(transactionEdit.categoria.id),
         despesa: transactionEdit.valor < 1 ? "1" : "0",
       });
@@ -119,7 +121,7 @@ export default function TransferTransactionModal() {
   return (
     <FormModal
       open={open}
-      toggleModal={toggleTransferTransactionModal}
+      toggleModal={() => toggleTransactionModal(true)}
       dialogTitle={
         transactionEdit ? "Editar transferência" : "Adicionar transferência"
       }
@@ -159,10 +161,7 @@ export default function TransferTransactionModal() {
       </div>
       <div className="grid gap-2">
         <Label htmlFor="account-form">Conta de destino</Label>
-        <AccountSelect
-          name="conta_relacao_id"
-          disabled={!!methods.getValues("conta_id")}
-        />
+        <AccountSelect name="conta_relacao_id" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="category-form">Categoria</Label>

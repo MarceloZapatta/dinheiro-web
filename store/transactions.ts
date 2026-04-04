@@ -19,12 +19,8 @@ import {
 
 export interface TransactionsModel {
   transactionModalOpen: boolean;
-  toggleTransactionModal: Action<TransactionsModel, void>;
-  openAddNewTransactionModal: Thunk<
-    TransactionsModel,
-    boolean | undefined,
-    void
-  >;
+  toggleTransactionModal: Action<TransactionsModel, boolean | void>;
+  openAddNewTransactionModal: Thunk<TransactionsModel, boolean | void, void>;
   isTransferTransaction: boolean;
   setIsTransferTransaction: Action<TransactionsModel, boolean>;
   transactions: Transaction[];
@@ -62,13 +58,14 @@ const moveTransactionsPeriod = (
 
 export const transactionsStore: TransactionsModel = {
   transactionModalOpen: false,
-  toggleTransactionModal: action((state) => {
+  toggleTransactionModal: action((state, isTransfer = false) => {
     state.transactionModalOpen = !state.transactionModalOpen;
+    state.isTransferTransaction = !!isTransfer;
   }),
   openAddNewTransactionModal: thunk((actions, isTransfer = false) => {
     actions.setTransactionEdit(null);
-    actions.toggleTransactionModal();
-    actions.setIsTransferTransaction(isTransfer);
+    actions.toggleTransactionModal(isTransfer);
+    actions.setIsTransferTransaction(!!isTransfer);
   }),
   isTransferTransaction: false,
   setIsTransferTransaction: action((state, payload) => {
@@ -84,7 +81,7 @@ export const transactionsStore: TransactionsModel = {
   }),
   editTransaction: thunk((actions, _payload: Transaction) => {
     actions.setTransactionEdit(_payload);
-    actions.toggleTransactionModal();
+    actions.toggleTransactionModal(false);
   }),
   fetchTransactions: thunk(async (actions, _payload, { getState }) => {
     const state = getState();

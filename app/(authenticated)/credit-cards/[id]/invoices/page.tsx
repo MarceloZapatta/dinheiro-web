@@ -31,8 +31,8 @@ export default function CreditCardInvoices() {
   const fetchInvoices = useStoreActions(
     (actions) => actions.creditCards.fetchInvoices,
   );
-  const editCreditCard = useStoreActions(
-    (actions) => actions.creditCards.editCreditCard,
+  const editTransaction = useStoreActions(
+    (actions) => actions.transactions.editTransaction,
   );
   const openAddNewCreditCardModal = useStoreActions(
     (actions) => actions.creditCards.openAddNewCreditCardModal,
@@ -87,7 +87,7 @@ export default function CreditCardInvoices() {
                 {currentInvoice?.transactions.map((transaction) => (
                   <TableRow
                     key={transaction.id}
-                    onClick={() => editCreditCard(transaction)}
+                    onClick={() => editTransaction(transaction)}
                   >
                     <TableCell className="font-medium">
                       <small>

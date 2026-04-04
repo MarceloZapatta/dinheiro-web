@@ -2,7 +2,7 @@ import { use } from "react";
 import { retrieveToken } from "./auth";
 
 export interface DataFields {
-  [key: string]: string | number | File;
+  [key: string]: string | number | File | undefined;
 }
 
 export interface ApiResponse<T> {

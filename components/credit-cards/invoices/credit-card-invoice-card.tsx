@@ -29,7 +29,7 @@ export function CreditCardInvoiceCard({ invoice }: CreditCardInvoiceCardProps) {
   };
 
   return (
-    <Card size="sm" className="mx-auto w-full max-w-sm">
+    <Card className="mx-auto w-full max-w-sm">
       <CardHeader>
         <CardTitle className="flex justify-between">
           {format(new Date(invoice.reference_date), "MM/yyyy")}{" "}
