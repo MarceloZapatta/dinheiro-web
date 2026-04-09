@@ -103,16 +103,17 @@ export async function importTransactionsFile(
 ): Promise<ApiResponse<ImportTransactionsResponse>> {
   console.log(file);
 
-  const res = await postApi(
-    `transactions/import/${type}`,
-    {
-      file: file,
-      account_type: accountType,
-      conta_id: contaId,
-      credit_card_invoice_id: creditCardInvoiceId,
-    },
-    true,
-  );
+  const body = {
+    file: file,
+    account_type: accountType,
+    conta_id: contaId,
+  };
+
+  if (accountType === AccountType.CREDIT_CARD) {
+    body.credit_card_invoice_id = creditCardInvoiceId;
+  }
+
+  const res = await postApi(`transactions/import/${type}`, body, true);
 
   if (!res.ok) {
     throw new Error("Importing transactions file failed");

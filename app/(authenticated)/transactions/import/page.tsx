@@ -41,7 +41,7 @@ export default function Import() {
       type: "ofx",
       account_type: AccountType.BANK,
       conta_id: "",
-      credit_card_invoice_id: undefined,
+      credit_card_invoice_id: "",
     },
   });
 
