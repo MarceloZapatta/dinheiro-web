@@ -103,14 +103,13 @@ export async function importTransactionsFile(
 ): Promise<ApiResponse<ImportTransactionsResponse>> {
   console.log(file);
 
-  const body = {
-    file: file,
-    account_type: accountType,
-    conta_id: contaId,
-  };
+  const body: DataFields = {};
+  body["file"] = file;
+  body["account_type"] = accountType;
+  body["conta_id"] = contaId;
 
   if (accountType === AccountType.CREDIT_CARD) {
-    body.credit_card_invoice_id = creditCardInvoiceId;
+    body["credit_card_invoice_id"] = creditCardInvoiceId;
   }
 
   const res = await postApi(`transactions/import/${type}`, body, true);
