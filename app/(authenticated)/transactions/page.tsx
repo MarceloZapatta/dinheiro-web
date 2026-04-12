@@ -19,7 +19,6 @@ import {
   Plus,
 } from "lucide-react";
 import { useEffect } from "react";
-import { format, parse } from "date-fns";
 import {
   Popover,
   PopoverContent,
@@ -29,6 +28,8 @@ import Link from "next/link";
 import { MonthFilter } from "@/components/ui/month-filter";
 import { Transaction } from "@/types/transaction";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/app/helpers/date";
+import { formatMoney } from "@/app/helpers/money";
 
 export default function Transactions() {
   const { transactions, transactionsStartPeriod } = useStoreState(
@@ -51,10 +52,7 @@ export default function Transactions() {
     movePreviousTransactionsPeriod();
   };
 
-  const currentPeriod = format(
-    parse(transactionsStartPeriod, "yyyy-MM-dd", new Date()),
-    "MMMM yyyy",
-  );
+  const currentPeriod = formatDate(transactionsStartPeriod, "MMMM yyyy");
 
   useEffect(() => {
     (async () => {
@@ -145,9 +143,7 @@ export default function Transactions() {
                 onClick={() => editTransaction(transaction)}
               >
                 <TableCell className="font-medium">
-                  <small>
-                    {format(new Date(transaction.data_transacao), "dd/MM")}
-                  </small>
+                  <small>{formatDate(transaction.data_transacao)}</small>
                   <br />
                   {transaction.descricao}
                   <br />
@@ -162,11 +158,8 @@ export default function Transactions() {
                       {transaction.credit_card_invoice && (
                         <Badge className="mx-2">
                           Fatura:{" "}
-                          {format(
-                            new Date(
-                              transaction.credit_card_invoice.reference_date,
-                            ),
-                            "MM/yyyy",
+                          {formatDate(
+                            transaction.credit_card_invoice.reference_date,
                           )}
                         </Badge>
                       )}
@@ -196,10 +189,7 @@ export default function Transactions() {
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  {Number(transaction.valor).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+                  {formatMoney(transaction.valor)}
                 </TableCell>
               </TableRow>
             ))}
