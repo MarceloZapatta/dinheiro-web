@@ -7,6 +7,7 @@ import { handleLoginService, LoginData } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginData>();
@@ -23,7 +24,7 @@ export default function Login() {
   useEffect(() => {
     const sessionExpired = localStorage.getItem("session_expired");
     if (sessionExpired) {
-      alert("Your session has expired. Please log in again.");
+      toast.error("Your session has expired. Please log in again.");
       localStorage.removeItem("session_expired");
     }
   }, []);
