@@ -1,5 +1,5 @@
 import { use } from "react";
-import { retrieveToken } from "./auth";
+import { clearToken, retrieveToken } from "./auth";
 
 export interface DataFields {
   [key: string]: string | number | File | undefined;
@@ -53,11 +53,16 @@ export async function fetchApi(
     headers["Content-Type"] = "application/json";
   }
 
-  return fetch(`${apiUrl}/${endpoint}${queryParams}`, {
+  const res = await fetch(`${apiUrl}/${endpoint}${queryParams}`, {
     method,
     headers: headers,
     body: method === "POST" || method === "PUT" ? body : undefined,
   });
+  console.log(res.ok, "aqqqq", res.status);
+  if (!res.ok && res.status === 401) {
+    handleUnauthorizedResponse();
+  }
+  return res;
 }
 
 export async function postApi(
@@ -94,4 +99,10 @@ function getCookie(name: string): string | undefined {
     .split("; ")
     .find((row) => row.startsWith(name + "="))
     ?.split("=")[1];
+}
+
+function handleUnauthorizedResponse() {
+  clearToken();
+  localStorage.setItem("session_expired", "true");
+  window.location.href = "/login";
 }

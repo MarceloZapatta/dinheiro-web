@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { handleLoginService, LoginData } from "@/services/auth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function Login() {
@@ -19,6 +19,14 @@ export default function Login() {
     router.push("/transactions");
     setLoading(false);
   };
+
+  useEffect(() => {
+    const sessionExpired = localStorage.getItem("session_expired");
+    if (sessionExpired) {
+      alert("Your session has expired. Please log in again.");
+      localStorage.removeItem("session_expired");
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">

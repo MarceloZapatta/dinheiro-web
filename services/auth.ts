@@ -42,3 +42,9 @@ export async function retrieveToken() {
   const token = localStorage.getItem("access_token");
   return token;
 }
+
+export async function clearToken() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("token_type");
+  localStorage.removeItem("expires_in");
+}
