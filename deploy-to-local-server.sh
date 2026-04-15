@@ -1,40 +1,61 @@
-#!/bin/zsh
+#!/bin/bash
 
-# Usage: ./deploy-to-local-server.sh
-# This script builds the Next.js app and deploys the output to a remote server via SSH.
-
-# Backup current .env.local
-cp .env.local .env.local.backup
-
-# Use deploy env
-cp .env.deploy.local .env.local
-
-export $(grep -v '^#' .env.local | xargs)
-
-# Set the local server IP (edit as needed)
-LOCAL_SERVER_IP=${LOCAL_SERVER_IP:-"192.168.1.100"}
-REMOTE_USER=${REMOTE_USER:-"youruser"}
-REMOTE_PATH=${REMOTE_PATH:-"/var/www/dinheiro-web"}
-
-# Build the Next.js app
-pnpm build
-
-if [ $? -ne 0 ]; then
-  echo "Build failed. Aborting deployment."
-  exit 1
+# Load environment variables from .env.local file if it exists
+if [ -f .env.local ]; then
+    export $(cat .env.local | grep -v '#' | xargs)
 fi
 
-# Deploy the 'out' directory to the remote server
-rsync -avz --delete ./out/ "$REMOTE_USER@$LOCAL_SERVER_IP:$REMOTE_PATH"
+# Set default values if env variables are not set
+SSH_USER=${SSH_USER:-"root"}
+SSH_HOST=${SSH_HOST:-"your-server-host.com"}
+SSH_PORT=${SSH_PORT:-22}
+PROJECT_PATH=${PROJECT_PATH:-"/var/www/dinheiro-web"}
+SSH_KEY=${SSH_KEY:-"$HOME/.ssh/id_rsa"}
+DOCKER_CONTAINER=${DOCKER_CONTAINER:-"dinheiro-api-app"}
 
-if [ $? -eq 0 ]; then
-  echo "Deployment successful!"
-  mv .env.local.backup .env.local
-else
-  echo "Deployment failed."
-  mv .env.local.backup .env.local
-  exit 1
-fi
+# Color output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-# Restore original .env.local
-mv .env.local.backup .env.local
+# Function to print colored output
+print_status() {
+    echo -e "${GREEN}[DEPLOY]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+# Function to run remote commands
+run_remote() {
+    local cmd=$1
+    ssh -i "$SSH_KEY" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "source .bashrc && $cmd"
+}
+
+# Start deployment
+print_status "Starting deployment..."
+print_status "SSH Host: $SSH_HOST"
+print_status "Project Path: $PROJECT_PATH"
+print_status "Docker Container: $DOCKER_CONTAINER"
+echo ""
+
+# Step 1: Connect and go to project folder
+print_status "Connecting to server and navigating to project folder..."
+run_remote "cd $PROJECT_PATH || exit 1" || { print_error "Failed to navigate to project folder"; exit 1; }
+
+# Step 2: Git pull
+print_status "Running git pull..."
+run_remote "cd $PROJECT_PATH && git pull" || { print_error "Git pull failed"; exit 1; }
+
+# Step 3: Run docker compose up -d --build
+print_status "Running docker compose up -d --build..."
+run_remote "cd $PROJECT_PATH && docker compose up -d --build" || { print_error "Docker compose up -d --build failed"; exit 1; }
+
+echo ""
+print_status "${GREEN}Deployment completed successfully!${NC}"

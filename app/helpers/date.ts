@@ -10,7 +10,9 @@ export function formatDate(
   date: string,
   formatString: string = "dd/MM",
 ): string {
-  const parsedDate = parse(date, "yyyy-MM-dd", new Date());
+  console.log(date);
+  const parseFormat = date.length > 10 ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd";
+  const parsedDate = parse(date, parseFormat, new Date());
   return format(parsedDate, formatString);
 }
 

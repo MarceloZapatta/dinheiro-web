@@ -143,7 +143,9 @@ export default function Transactions() {
                 onClick={() => editTransaction(transaction)}
               >
                 <TableCell className="font-medium">
-                  <small>{formatDate(transaction.data_transacao)}</small>
+                  <small>
+                    {formatDate(transaction.data_transacao, "dd/MM")}
+                  </small>
                   <br />
                   {transaction.descricao}
                   <br />
