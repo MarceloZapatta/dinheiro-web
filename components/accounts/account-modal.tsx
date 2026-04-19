@@ -15,6 +15,7 @@ import {
 } from "@/services/accounts";
 import ColorSelect from "../ui/colors/color-select";
 import FormModal from "../modal/form-modal";
+import AccountTypeRadioGroup from "../ui/accounts/account-type-radio-group";
 
 export default function AccountModal() {
   const accountEdit = useStoreState((state) => state.accounts.accountEdit);
@@ -34,6 +35,10 @@ export default function AccountModal() {
 
   const fetchColors = useStoreActions((actions) => actions.colors.fetchColors);
 
+  const fetchAccounts = useStoreActions(
+    (actions) => actions.accounts.fetchAccounts,
+  );
+
   const [loading, setLoading] = useState(false);
 
   const handleSaveAccount = async (data: AccountData) => {
@@ -45,8 +50,8 @@ export default function AccountModal() {
       await storeAccount(data);
     }
 
-    fetchAccounts();
     toggleAccountModal();
+    fetchAccounts();
     setLoading(false);
   };
 
@@ -113,6 +118,10 @@ export default function AccountModal() {
       <div className="grid gap-2">
         <Label htmlFor="account-form">Cor</Label>
         <ColorSelect />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="account-type-form">Tipo de conta</Label>
+        <AccountTypeRadioGroup name="account_type" />
       </div>
     </FormModal>
   );
