@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { Params } from "next/dist/server/request/params";
 import { CreditCardInvoiceCard } from "@/components/credit-cards/invoices/credit-card-invoice-card";
-import { format } from "date-fns/format";
+import { formatDate } from "@/app/helpers/date";
 
 interface CreditCardInvoicesParams extends Params {
   readonly id: string;
@@ -66,8 +66,7 @@ export default function CreditCardInvoices() {
         {currentInvoice && (
           <div className="w-full">
             <h2 className="text-xl py-5">
-              Fatura:{" "}
-              {format(new Date(currentInvoice.reference_date), "MM/yyyy")}
+              Fatura: {formatDate(currentInvoice.reference_date, "MM/yyyy")}
             </h2>
             <Table>
               <TableHeader>
@@ -91,7 +90,7 @@ export default function CreditCardInvoices() {
                   >
                     <TableCell className="font-medium">
                       <small>
-                        {format(new Date(transaction.data_transacao), "dd/MM")}
+                        {formatDate(transaction.data_transacao, "dd/MM")}
                       </small>
                       <br />
                       {transaction.descricao}

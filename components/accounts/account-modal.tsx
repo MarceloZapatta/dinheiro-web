@@ -9,7 +9,6 @@ import NumberInput from "@/components/ui/number-input";
 import {
   AccountData,
   deleteAccount,
-  fetchAccounts,
   storeAccount,
   updateAccount,
 } from "@/services/accounts";
