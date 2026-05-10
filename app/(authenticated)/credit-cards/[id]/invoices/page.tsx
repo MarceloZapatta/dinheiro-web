@@ -10,13 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useStoreActions, useStoreState } from "@/store/hooks";
-import { ArrowRight, Circle, Plus } from "lucide-react";
+import { Circle, Plus, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Params } from "next/dist/server/request/params";
 import { CreditCardInvoiceCard } from "@/components/credit-cards/invoices/credit-card-invoice-card";
 import { formatDate } from "@/app/helpers/date";
+import CreditCardInvoiceModal from "@/components/credit-cards/invoices/credit-card-invoice-modal";
+import { deleteInvoice } from "@/services/credit-cards";
 
 interface CreditCardInvoicesParams extends Params {
   readonly id: string;
@@ -34,9 +35,10 @@ export default function CreditCardInvoices() {
   const editTransaction = useStoreActions(
     (actions) => actions.transactions.editTransaction,
   );
-  const openAddNewCreditCardModal = useStoreActions(
-    (actions) => actions.creditCards.openAddNewCreditCardModal,
+  const openAddNewInvoiceModal = useStoreActions(
+    (actions) => actions.creditCards.openAddNewInvoiceModal,
   );
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -44,12 +46,22 @@ export default function CreditCardInvoices() {
     })();
   }, [fetchInvoices, id]);
 
+  const handleDeleteInvoice = async (invoiceId: number) => {
+    setDeletingId(invoiceId);
+    try {
+      await deleteInvoice(Number(id), invoiceId);
+      fetchInvoices(Number(id));
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-4 bg-white dark:bg-black sm:items-start">
         <div className="flex justify-between w-full">
           <h1 className="text-2xl pb-5">Faturas</h1>
-          <Button onClick={() => openAddNewCreditCardModal()}>
+          <Button onClick={() => openAddNewInvoiceModal()}>
             <Plus />
           </Button>
         </div>
@@ -58,7 +70,7 @@ export default function CreditCardInvoices() {
             Nenhuma fatura encontrada.
           </div>
         )}
-        <div className="flex justify-between w-full">
+        <div className="flex justify-between w-full gap-2">
           {invoices.map((invoice) => (
             <CreditCardInvoiceCard key={invoice.id} invoice={invoice} />
           ))}
@@ -73,12 +85,13 @@ export default function CreditCardInvoices() {
                 <TableRow>
                   <TableHead>Descrição</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {currentInvoice?.transactions.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={2} className="text-center">
+                    <TableCell colSpan={3} className="text-center">
                       Nenhuma transação encontrada.
                     </TableCell>
                   </TableRow>
@@ -112,12 +125,26 @@ export default function CreditCardInvoices() {
                         currency: "BRL",
                       })}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteInvoice(currentInvoice.id);
+                        }}
+                        disabled={deletingId === currentInvoice.id}
+                      >
+                        <Trash2 size={18} />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
         )}
+        <CreditCardInvoiceModal />
       </main>
     </div>
   );

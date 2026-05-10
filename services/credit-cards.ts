@@ -78,3 +78,30 @@ export async function deleteCreditCard(id: number) {
 
   return await res.json();
 }
+
+export async function storeInvoice(
+  creditCardId: number,
+  data: Record<string, any>,
+) {
+  const res = await postApi(`credit-cards/${creditCardId}/invoices`, data);
+
+  if (!res.ok) {
+    console.error("Storing invoice failed");
+    return;
+  }
+
+  return await res.json();
+}
+
+export async function deleteInvoice(creditCardId: number, invoiceId: number) {
+  const res = await deleteApi(
+    `credit-cards/${creditCardId}/invoices/${invoiceId}`,
+  );
+
+  if (!res.ok) {
+    console.error("Deleting invoice failed");
+    return;
+  }
+
+  return await res.json();
+}

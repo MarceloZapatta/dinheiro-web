@@ -29,3 +29,19 @@ export function formatISOString(
   const parsedDate = parseJSON(date);
   return format(parsedDate, formatString);
 }
+
+/**
+ * Check if a date is after another date.
+ * @param date1 string in the format "yyyy-MM-dd"
+ * @param date2 string in the format "yyyy-MM-dd"
+ * @returns boolean indicating if date1 is after date2
+ */
+export function isAfter(date1: string, date2: string): boolean {
+  console.log("Comparing date1:", date1, "with date2:", date2);
+  const parseFormat1 = date1.length > 10 ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd";
+  const parseFormat2 = date2.length > 10 ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd";
+  const parsedDate1 = parse(date1, parseFormat1, new Date());
+  const parsedDate2 = parse(date2, parseFormat2, new Date());
+  console.log("Comparing dates:", parsedDate1, parsedDate2);
+  return parsedDate1 > parsedDate2;
+}

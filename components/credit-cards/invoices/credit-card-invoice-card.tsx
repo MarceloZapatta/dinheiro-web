@@ -1,3 +1,4 @@
+import { formatDate, isAfter } from "@/app/helpers/date";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +33,7 @@ export function CreditCardInvoiceCard({ invoice }: CreditCardInvoiceCardProps) {
     <Card className="mx-auto w-full max-w-sm">
       <CardHeader>
         <CardTitle className="flex justify-between">
-          {format(new Date(invoice.reference_date), "MM/yyyy")}{" "}
+          {formatDate(invoice.reference_date, "MM/yyyy")}{" "}
           {currentInvoice?.id === Number(invoice.id) && (
             <Badge variant="secondary">Visualizando</Badge>
           )}
@@ -46,6 +47,11 @@ export function CreditCardInvoiceCard({ invoice }: CreditCardInvoiceCardProps) {
             currency: "BRL",
           })}
           <Badge>{invoice.is_paid ? "Paga" : "Não Paga"}</Badge>
+          <Badge>
+            {isAfter(invoice.closing_date, format(new Date(), "yyyy-MM-dd"))
+              ? "Aberta"
+              : "Fechada"}
+          </Badge>
         </div>
       </CardContent>
       <CardFooter className="flex gap-2">

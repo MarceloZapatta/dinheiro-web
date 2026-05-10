@@ -18,6 +18,12 @@ export interface CreditCardsModel {
   fetchInvoices: Thunk<CreditCardsModel, number>;
   currentInvoice: CreditCardInvoice | null;
   setCurrentInvoice: Action<CreditCardsModel, CreditCardInvoice | null>;
+  invoiceModalOpen: boolean;
+  toggleInvoiceModal: Action<CreditCardsModel, void>;
+  invoiceEdit: CreditCardInvoice | null;
+  setInvoiceEdit: Action<CreditCardsModel, CreditCardInvoice | null>;
+  openAddNewInvoiceModal: Thunk<CreditCardsModel, void>;
+  editInvoice: Thunk<CreditCardsModel, CreditCardInvoice>;
 }
 
 export const creditCardsStore: CreditCardsModel = {
@@ -62,5 +68,21 @@ export const creditCardsStore: CreditCardsModel = {
   currentInvoice: null,
   setCurrentInvoice: action((state, payload) => {
     state.currentInvoice = payload;
+  }),
+  invoiceModalOpen: false,
+  toggleInvoiceModal: action((state) => {
+    state.invoiceModalOpen = !state.invoiceModalOpen;
+  }),
+  invoiceEdit: null,
+  setInvoiceEdit: action((state, payload) => {
+    state.invoiceEdit = payload;
+  }),
+  openAddNewInvoiceModal: thunk((actions) => {
+    actions.setInvoiceEdit(null);
+    actions.toggleInvoiceModal();
+  }),
+  editInvoice: thunk((actions, _payload: CreditCardInvoice) => {
+    actions.setInvoiceEdit(_payload);
+    actions.toggleInvoiceModal();
   }),
 };
