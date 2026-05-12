@@ -10,6 +10,7 @@ interface NumberInputProps {
 export default function NumberInput(props: Readonly<NumberInputProps>) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const formatCurrencyBRL = (value: string) => {
+    // Treat input as cents (integer cents)
     const number = Number(value) / 100;
     return number.toLocaleString("pt-BR", {
       style: "currency",
@@ -35,7 +36,10 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
       return value;
     }
 
-    return value ? Number(value.replaceAll(/[^\d]/g, "")) / 100 : 0;
+    // Remove all non-digits to get cents (e.g., "R$ 1.000,50" → "100050")
+    const cents = Number(value.replaceAll(/\D/g, ""));
+    // Convert cents back to decimal (e.g., "100050" → 1000.50)
+    return cents ? cents / 100 : 0;
   };
 
   const methods = useFormContext();
@@ -46,20 +50,21 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
 
     // Use setTimeout to allow React Hook Form to settle, then find and format the input
     const timer = setTimeout(() => {
-      const input = document.getElementById(`value-form-${props.name}`) as HTMLInputElement;
+      const input = document.getElementById(
+        `value-form-${props.name}`,
+      ) as HTMLInputElement;
       if (!input) return;
 
-      let value = String(fieldValue);
-      // Remove any existing formatting
-      value = value.replaceAll(/\D/g, "");
-
-      if (!value) {
+      // Convert decimal number to cents (e.g., 1000.5 → "100050")
+      const cents = Math.round(Number(fieldValue) * 100);
+      
+      if (cents === 0) {
         input.value = "";
         return;
       }
 
       // Format the display value
-      input.value = formatCurrencyBRL(value);
+      input.value = formatCurrencyBRL(String(cents));
     }, 0);
 
     return () => clearTimeout(timer);
