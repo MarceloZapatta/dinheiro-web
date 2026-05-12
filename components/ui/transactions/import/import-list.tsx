@@ -13,7 +13,7 @@ import {
   confirmImportTransactions,
   fetchImportTransactions,
 } from "@/services/transactions";
-import { useStoreActions } from "@/store/hooks";
+import { useStoreActions, useStoreState } from "@/store/hooks";
 import { Transaction } from "@/types/transaction";
 import { Circle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
