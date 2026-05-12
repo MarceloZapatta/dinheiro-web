@@ -42,20 +42,32 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
   const fieldValue = useWatch({ control: methods.control, name: props.name });
 
   useEffect(() => {
-    if (!inputRef.current || fieldValue === undefined) return;
+    if (fieldValue === undefined || fieldValue === "") return;
 
-    const numeric = String(fieldValue).replaceAll(/\D/g, "");
-    if (!numeric) {
-      inputRef.current.value = "";
-      return;
-    }
+    // Use setTimeout to allow React Hook Form to settle, then find and format the input
+    const timer = setTimeout(() => {
+      const input = document.getElementById(`value-form-${props.name}`) as HTMLInputElement;
+      if (!input) return;
 
-    inputRef.current.value = formatCurrencyBRL(numeric);
-  }, [fieldValue]);
+      let value = String(fieldValue);
+      // Remove any existing formatting
+      value = value.replaceAll(/\D/g, "");
+
+      if (!value) {
+        input.value = "";
+        return;
+      }
+
+      // Format the display value
+      input.value = formatCurrencyBRL(value);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [fieldValue, props.name]);
 
   return (
     <Input
-      id="value-form"
+      id={`value-form-${props.name}`}
       {...methods.register(props.name, {
         onChange: (e) => maskValue(e),
         setValueAs: handleSetValueAs,
@@ -64,6 +76,7 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
       inputMode="numeric"
       placeholder="R$ 0,00"
       {...props.attributes}
+      ref={inputRef}
     />
   );
 }
