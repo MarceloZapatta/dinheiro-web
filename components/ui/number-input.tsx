@@ -1,4 +1,4 @@
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Input } from "./input";
 import { useEffect, useRef } from "react";
 
@@ -39,19 +39,19 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
   };
 
   const methods = useFormContext();
+  const fieldValue = useWatch({ control: methods.control, name: props.name });
 
   useEffect(() => {
-    const raw = methods.getValues(props.name); // value coming from RHF
-    if (!inputRef.current || raw === undefined) return;
+    if (!inputRef.current || fieldValue === undefined) return;
 
-    const numeric = String(raw).replaceAll(/\D/g, "");
+    const numeric = String(fieldValue).replaceAll(/\D/g, "");
     if (!numeric) {
       inputRef.current.value = "";
       return;
     }
 
     inputRef.current.value = formatCurrencyBRL(numeric);
-  }, [props.name, methods]);
+  }, [fieldValue]);
 
   return (
     <Input
