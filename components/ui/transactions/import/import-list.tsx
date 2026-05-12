@@ -25,10 +25,14 @@ export default function ImportList() {
   const [importTransactions, setImportTransactions] = useState<Transaction[]>(
     [],
   );
-  const editTransaction = useStoreActions(
-    (actions) => actions.transactions.editTransaction,
+  const { editTransaction } = useStoreActions(
+    (actions) => actions.transactions,
+  );
+  const { transactionModalOpen } = useStoreState(
+    (state) => state.transactions,
   );
 
+  // Fetch import transactions on mount and when import ID changes
   useEffect(() => {
     const handleFetchImportTransactions = async () => {
       const response = await fetchImportTransactions(Number(params.id));
@@ -36,6 +40,17 @@ export default function ImportList() {
     };
     handleFetchImportTransactions();
   }, [params.id]);
+
+  // Refetch import transactions when modal closes after an update
+  useEffect(() => {
+    if (!transactionModalOpen) {
+      const handleRefetchImportTransactions = async () => {
+        const response = await fetchImportTransactions(Number(params.id));
+        setImportTransactions(response.data.movimentacoes);
+      };
+      handleRefetchImportTransactions();
+    }
+  }, [transactionModalOpen, params.id]);
 
   const handleConfirmImport = async () => {
     await confirmImportTransactions(Number(params.id));
