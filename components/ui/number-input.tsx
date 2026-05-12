@@ -40,18 +40,18 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
 
   const methods = useFormContext();
 
-  // useEffect(() => {
-  //   const raw = methods.getValues(props.name); // value coming from RHF
-  //   if (!inputRef.current || raw === undefined) return;
+  useEffect(() => {
+    const raw = methods.getValues(props.name); // value coming from RHF
+    if (!inputRef.current || raw === undefined) return;
 
-  //   const numeric = String(raw).replaceAll(/\D/g, "");
-  //   if (!numeric) {
-  //     inputRef.current.value = "";
-  //     return;
-  //   }
+    const numeric = String(raw).replaceAll(/\D/g, "");
+    if (!numeric) {
+      inputRef.current.value = "";
+      return;
+    }
 
-  //   inputRef.current.value = formatCurrencyBRL(numeric);
-  // }, []);
+    inputRef.current.value = formatCurrencyBRL(numeric);
+  }, [props.name, methods]);
 
   return (
     <Input
