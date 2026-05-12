@@ -20,15 +20,18 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
 
   const maskValue = (event: React.FormEvent<HTMLInputElement>) => {
     const input = event.currentTarget;
-    let { value } = input;
-    value = value.replaceAll(/\D/g, "");
+    const { value } = input;
+    const cents = value.replaceAll(/\D/g, "");
 
-    if (!value) {
+    if (!cents) {
       event.currentTarget.value = "";
+      methods.setValue(props.name, 0);
       return;
     }
 
-    event.currentTarget.value = formatCurrencyBRL(value);
+    const decimalValue = Number(cents) / 100;
+    event.currentTarget.value = formatCurrencyBRL(cents);
+    methods.setValue(props.name, decimalValue);
   };
 
   const handleSetValueAs = (value: string | number) => {
@@ -57,7 +60,7 @@ export default function NumberInput(props: Readonly<NumberInputProps>) {
 
       // Convert decimal number to cents (e.g., 1000.5 → "100050")
       const cents = Math.round(Number(fieldValue) * 100);
-      
+
       if (cents === 0) {
         input.value = "";
         return;
