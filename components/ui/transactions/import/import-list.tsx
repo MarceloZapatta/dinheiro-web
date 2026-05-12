@@ -18,6 +18,7 @@ import { Transaction } from "@/types/transaction";
 import { Circle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { formatDate } from "@/app/helpers/date";
 
 export default function ImportList() {
   const router = useRouter();
@@ -67,6 +68,10 @@ export default function ImportList() {
                 onClick={() => editTransaction(transaction)}
               >
                 <TableCell className="font-medium">
+                  <small>
+                    {formatDate(transaction.data_transacao, "dd/MM")}
+                  </small>
+                  <br />
                   {transaction.descricao}
                   <br />
                   <div className="flex gap-2">
