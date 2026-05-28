@@ -2,7 +2,7 @@ import { use } from "react";
 import { clearToken, retrieveToken } from "./auth";
 
 export interface DataFields {
-  [key: string]: string | number | File | undefined;
+  [key: string]: string | number | File | FileList | undefined;
 }
 
 export interface ApiResponse<T> {
@@ -24,9 +24,18 @@ export async function fetchApi(
 
   if (useFormData) {
     if (data) {
-      Object.keys(data).forEach((key) =>
-        formData.append(key, data[key] as string | Blob),
-      );
+      Object.keys(data).forEach((key) => {
+        if (data[key] instanceof FileList) {
+          const files = data[key];
+
+          for (const file of files) {
+            formData.append(`${key}[]`, file);
+          }
+          return;
+        }
+
+        formData.append(key, data[key] as string | Blob);
+      });
     }
   }
 

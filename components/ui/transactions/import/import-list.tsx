@@ -19,6 +19,7 @@ import { Circle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/app/helpers/date";
+import { Badge } from "../../badge";
 
 export default function ImportList() {
   const router = useRouter();
@@ -29,9 +30,7 @@ export default function ImportList() {
   const { editTransaction } = useStoreActions(
     (actions) => actions.transactions,
   );
-  const { transactionModalOpen } = useStoreState(
-    (state) => state.transactions,
-  );
+  const { transactionModalOpen } = useStoreState((state) => state.transactions);
 
   // Fetch import transactions on mount and when import ID changes
   useEffect(() => {
@@ -87,7 +86,14 @@ export default function ImportList() {
                     {formatDate(transaction.data_transacao, "dd/MM")}
                   </small>
                   <br />
-                  {transaction.descricao}
+                  {transaction.descricao}{" "}
+                  {transaction.installment_number &&
+                    transaction.total_installments && (
+                      <Badge variant="outline" className="mx-2">
+                        Parcela {transaction.installment_number}/
+                        {transaction.total_installments}
+                      </Badge>
+                    )}
                   <br />
                   <div className="flex gap-2">
                     <span className="flex">
@@ -106,6 +112,14 @@ export default function ImportList() {
                       />
                       {transaction.categoria.nome}
                     </span>
+                    {transaction.credit_card_invoice && (
+                      <Badge className="mx-2">
+                        Fatura:{" "}
+                        {formatDate(
+                          transaction.credit_card_invoice.reference_date,
+                        )}
+                      </Badge>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell className="text-right">

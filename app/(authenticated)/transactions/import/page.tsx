@@ -47,15 +47,18 @@ export default function Import() {
 
   const handleImport = async (data: ImportData) => {
     setLoading(true);
-    const file = data.file?.[0];
-    if (file) {
+    const files = data.file;
+
+    if (files && files.length > 0) {
       // Handle the file import logic here
-      console.log("Importing file:", file.name);
+      console.log(
+        "Importing files:",
+        Array.from(files).map((file) => file.name),
+      );
     }
 
     const result = await importTransactionsFile(
-      file,
-      data.type,
+      files,
       data.account_type,
       data.conta_id,
       data.credit_card_invoice_id,
@@ -73,15 +76,6 @@ export default function Import() {
     control: methods.control,
   });
   const isCreditCardImport = accountType === AccountType.CREDIT_CARD;
-
-  const acceptedFileTypes = () => {
-    if (type === "ofx") {
-      return ".ofx";
-    } else if (type === "image") {
-      return "image/*";
-    }
-    return "";
-  };
 
   useEffect(() => {
     // Reset file input when type changes
@@ -126,16 +120,13 @@ export default function Import() {
                 </div>
               </>
             )}
-            <div className="grid gap-2 py-2">
-              <Label htmlFor="type">Tipo de importação</Label>
-              <ImportTypeRadioGroup name="type" />
-            </div>
             <div className="grid gap-2">
               <Label htmlFor="file-form">Arquivo</Label>
               <Input
                 type="file"
-                accept={acceptedFileTypes()}
+                accept="image/jpg,image/jpeg,image/png,image/bmp,image/gif,image/svg,image/webp,.ofx,application/x-ofx"
                 {...methods.register("file")}
+                multiple={true}
               />
             </div>
             <div className="flex gap-2">

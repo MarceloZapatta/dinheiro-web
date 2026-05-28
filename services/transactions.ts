@@ -95,16 +95,16 @@ export async function deleteTransaction(id: number) {
 }
 
 export async function importTransactionsFile(
-  file: File,
-  type: "ofx" | "image" = "ofx",
+  files: FileList,
   accountType: AccountType,
   contaId: string,
   creditCardInvoiceId?: string,
 ): Promise<ApiResponse<ImportTransactionsResponse>> {
-  console.log(file);
+  console.log(files);
 
   const body: DataFields = {};
-  body["file"] = file;
+
+  body["files"] = files;
   body["account_type"] = accountType;
   body["conta_id"] = contaId;
 
@@ -112,7 +112,7 @@ export async function importTransactionsFile(
     body["credit_card_invoice_id"] = creditCardInvoiceId;
   }
 
-  const res = await postApi(`transactions/import/${type}`, body, true);
+  const res = await postApi(`transactions/import`, body, true);
 
   if (!res.ok) {
     throw new Error("Importing transactions file failed");

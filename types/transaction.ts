@@ -20,6 +20,8 @@ export interface Transaction {
   movimentacao_relacao: RelatedTransaction | null;
   categoria: Category;
   credit_card_invoice: CreditCardInvoice | null;
+  installment_number: number | null;
+  total_installments: number | null;
   created_at: string;
   updated_at: string;
 }
