@@ -18,6 +18,7 @@ export interface CreditCardEdit {
 export interface CreditCardInvoice {
   id: number;
   conta_id: number;
+  due_date: string;
   reference_date: string;
   closing_date: string;
   total_amount: number;
