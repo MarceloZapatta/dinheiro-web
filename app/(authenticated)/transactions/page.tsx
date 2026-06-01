@@ -147,7 +147,14 @@ export default function Transactions() {
                     {formatDate(transaction.data_transacao, "dd/MM")}
                   </small>
                   <br />
-                  {transaction.descricao}
+                  {transaction.descricao}{" "}
+                  {transaction.installment_number &&
+                    transaction.total_installments && (
+                      <Badge variant="outline" className="mx-2">
+                        Parcela {transaction.installment_number}/
+                        {transaction.total_installments}
+                      </Badge>
+                    )}
                   <br />
                   <div className="flex gap-2">
                     <span className="flex">
