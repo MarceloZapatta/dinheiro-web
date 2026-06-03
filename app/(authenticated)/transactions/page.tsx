@@ -147,7 +147,7 @@ export default function Transactions() {
                     {formatDate(transaction.data_transacao, "dd/MM")}
                   </small>
                   <br />
-                  {transaction.descricao}{" "}
+                  {transaction.descricao} dsadsa
                   {transaction.installment_number &&
                     transaction.total_installments && (
                       <Badge variant="outline" className="mx-2">

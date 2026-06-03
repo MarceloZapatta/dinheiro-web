@@ -57,17 +57,24 @@ export default function Import() {
       );
     }
 
-    const result = await importTransactionsFile(
-      files,
-      data.account_type,
-      data.conta_id,
-      data.credit_card_invoice_id,
-    );
-    console.log(result);
-
-    router.push(
-      `/transactions/import/${result.data.movimentacao_importacao.id}`,
-    );
+    try {
+      const result = await importTransactionsFile(
+        files,
+        data.account_type,
+        data.conta_id,
+        data.credit_card_invoice_id,
+      );
+      console.log(result);
+      router.push(
+        `/transactions/import/${result.data.movimentacao_importacao.id}`,
+      );
+    } catch (error: unknown) {
+      setLoading(false);
+      if (error instanceof Error) {
+        alert(error.message || "Erro ao importar arquivo");
+      }
+      throw error;
+    }
   };
 
   const type = useWatch({ name: "type", control: methods.control });
